@@ -188,7 +188,7 @@ class InitTestData(object):
         table = self.connection.table('users')
         users = MONGO_INSTANCE.users.find()
         for user in users:
-            print user.get('_id'), model_parser.de_parse('attrs', 'user', user)
+            print user.get('_id'), model_parser.de_parse('users', 'user', user)
             table.put(
                 str(user.get('_id')),
                 model_parser.de_parse('attrs', 'user', user),
@@ -199,22 +199,11 @@ class InitTestData(object):
         '''
             insert a new follow_relations test data.
         '''
+        model_parser = ModelParser()
         table = self.connection.table('follow_relations')
-        table.put(
-            'test_follow_relation',
-            {
-                'follow_attrs:created_at': '2012-1-1',
-                'follow_attrs:sm_deleted': '0',
-                'follow_attrs:followers_count': '1234',
-                'follow_attrs:friends_count': '2345',
-                'follow_attrs:statuses_count': '3456',
-                'follow_attrs:follower_id': '1234567890',
-                'task_attrs:sm_flwr_quality': '23.13',
-                'task_attrs:activeness': '30.31',
-            },
-        )
-
-        print table.row('test_row_1')
+        follow_relations = MONGO_INSTANCE.follow_relations.find()
+        for cur_relation in follow_relations:
+            print cur_relation.get('user_id'), model_parser.de_parse('follow_relation', 'follow_relation', cur_relation)
 
 
     def init_test_followers(self):
