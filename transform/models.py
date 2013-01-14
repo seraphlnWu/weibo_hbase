@@ -5,6 +5,8 @@ import happybase
 
 from datetime import datetime
 
+from parser.parser import ModelParser
+
 db = pymongo.Connection('localhost')['sandbox_mongo_5']
 
 
@@ -36,6 +38,7 @@ class HbaseInit(object):
         '''
         self.init_user()
         self.init_follow_relations()
+        self.init_followers()
 
 
     def init_test_data(self):
@@ -178,7 +181,13 @@ class InitTestData(object):
             init a user test module.
         '''
 
+        model_parser = ModelParser()
         table = self.connection.table('users')
+        users = db.users.find()
+        for user in users:
+            del user['_id']
+            del user['id']
+            print user.get('_id'), model_parser.de_parse('attrs', user)
 
         '''
         table.put(
@@ -209,7 +218,7 @@ class InitTestData(object):
             },
         )
         '''
-        return table.row('test_row_1')
+        #return table.row('test_row_1')
 
 
     def init_test_follow_relations(self):

@@ -27,6 +27,26 @@ def parse_datetime_from_hbase(o_datetime):
     return result
 
 
+def parse_datetime_from_hbase(o_datetime):
+    '''
+        parse the datetime to hbase support type
+    '''
+    return str(o_datetime)
+
+def parse_boolean_from_hbase(o_value):
+    '''
+        parse the boolean to hbase support type
+    '''
+    flag = 1 if o_value else 0
+    return str(flag)
+
+def parse_int_into_hbase(o_value):
+    '''
+        parse the int to hbase support type
+    '''
+    return str(o_value)
+
+
 def parse_boolean_from_hbase(o_value):
     '''
         convert the boolean type string which
@@ -61,3 +81,9 @@ def import_simplejson():
                 raise ImportError, "Can't load a json library"
  
     return json
+
+def make_clumn_name(prefix, attr):
+    '''
+        return a column name
+    '''
+    return ':'.join([prefix, attr])

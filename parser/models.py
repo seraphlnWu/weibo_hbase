@@ -6,6 +6,10 @@ from utils import parse_datetime_from_hbase
 from utils import parse_boolean_from_hbase
 from utils import parse_int_from_hbase
 from utils import import_simplejson
+from utils import make_clumn_name
+from utils import parse_datetime_into_hbase
+from utils import parse_boolean_into_hbase
+from utils import parse_int_into_hbase
 
 
 USER_DATETIME_COLUMN_SET = {
@@ -61,11 +65,26 @@ class Model(object):
         raise NotImplementedError
 
     @classmethod
+    def de_parse(cls, prefix, json):
+        '''
+            de parse a mongodb dict into Hbase type strcture
+        '''
+        raise NotImplementedError
+
+    @classmethod
     def parse_list(cls, api, json_list):
         '''
             parse a list of hbase objects into a result set of models instance
         '''
         results = ResultSet([cls.parse(api, obj) for obj in json_list])
+        return results
+
+    @classmethod
+    def de_parse_list(cls, prefix, json_list):
+        '''
+            de parse a list of mongodb objects to a set of hbase type
+        '''
+        results = ResultSet([cls.de_parse(api, obj) for obj in json_list])
         return results
 
 
@@ -99,6 +118,29 @@ class User(Model):
         return user
 
     @classmethod
+    def de_parse(cls, prefix, json):
+        '''
+            de parse
+        '''
+        result_dict = {}
+        for key, value in json.iteritems():
+            key_name = make_clumn_name(prefix, key)
+            if key in USER_DATETIME_COLUMN_SET:
+                result_dict[key_name] = parse_datetime_into_hbase(value)
+            elif key_name in USER_BOOLEAN_COLUMN_SET:
+                result_dict[key_name] = parse_boolean_into_hbase(value)
+            elif key_name in USER_INT_COLUMN_SET:
+                result_dict[key_name] = parse_int_into_hbase(value)
+            elif key_name in USER_LIST_COLUMN_SET:
+                json = import_simplejson()
+                result_dict[key_name] = json.dumps(value)
+            else:
+                result_dict[key_name] = value
+
+        return result_dict
+
+
+    @classmethod
     def parse_list(cls, api, json_list):
         '''
             parse a list of model.
@@ -110,6 +152,18 @@ class User(Model):
     
         results = ResultSet([cls.parse(api, obj) for obj in item_list])
         return results
+
+    @classmethod
+    def de_parse_list(cls, prefix, json_list):
+        '''
+            de parse a list of data
+        '''
+        if isinstance(json_list, list):
+            item_list = json_list
+        else:
+            item_list = json_list['users']
+
+        results = ResultSet([cls.de_parse(prefix, obj) for obj in item_list])
 
 
 class ModelFactory(object):
