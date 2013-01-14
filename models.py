@@ -106,3 +106,12 @@ class Users(Model):
     
         results = ResultSet([cls.parse(api, obj) for obj in item_list])
         return results
+
+
+class ModelFactory(object):
+    '''
+        Used by parsers for creating instances of
+        models. subclass this factary to add special
+        models is also valid.
+    '''
+    user = User
