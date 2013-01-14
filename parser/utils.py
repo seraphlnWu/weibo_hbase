@@ -27,13 +27,13 @@ def parse_datetime_from_hbase(o_datetime):
     return result
 
 
-def parse_datetime_from_hbase(o_datetime):
+def parse_datetime_into_hbase(o_datetime):
     '''
         parse the datetime to hbase support type
     '''
     return str(o_datetime)
 
-def parse_boolean_from_hbase(o_value):
+def parse_boolean_into_hbase(o_value):
     '''
         parse the boolean to hbase support type
     '''
