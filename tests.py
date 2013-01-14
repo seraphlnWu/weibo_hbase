@@ -15,6 +15,7 @@ def test_hbase_user():
     tmp_record = hbase_instance.insert_test_user()
     mp = ModelParser()
     result = mp.parse('user', tmp_record)
+    print result
     import ipdb;ipdb.set_trace()
     print 'done!'
 
