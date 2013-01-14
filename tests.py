@@ -3,7 +3,7 @@
     test module.
 '''
 
-from smdata.models import InitTestData
+from transform.models import InitTestData
 from parser.parser import ModelParser
 
 
