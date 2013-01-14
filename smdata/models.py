@@ -180,6 +180,7 @@ class InitTestData(object):
 
         table = self.connection.table('users')
 
+        '''
         table.put(
             'test_row_1',
             {
@@ -207,8 +208,8 @@ class InitTestData(object):
                 'user_tasks:inf_update_time': '2013-1-4',
             },
         )
-
-        print table.row('test_row_1')
+        '''
+        return table.row('test_row_1')
 
 
     def init_test_follow_relations(self):

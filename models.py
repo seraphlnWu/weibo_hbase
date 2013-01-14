@@ -69,7 +69,7 @@ class Model(object):
         return results
 
 
-class Users(Model):
+class User(Model):
     '''
         parse Model structure
     '''
@@ -80,17 +80,21 @@ class Users(Model):
         '''
         user = cls(api)
         for key, value in json.items():
+            final_key = key.split(':')[1]
             if key in USER_DATETIME_COLUMN_SET:
-                setattr(user, key, parse_datetime_from_hbase(value))
+                setattr(user, final_key, parse_datetime_from_hbase(value))
             elif key in USER_BOOLEAN_COLUMN_SET:
-                setattr(user, key, parse_boolean_from_hbase(value))
+                setattr(user, final_key, parse_boolean_from_hbase(value))
             elif key in USER_INT_COLUMN_SET:
-                setattr(user, key, parse_int_from_hbase(value))
+                setattr(user, final_key, parse_int_from_hbase(value))
             elif key in USER_LIST_COLUMN_SET:
                 json = import_simplejson()
-                setattr(user, key, json.loads(value))
+                try:
+                    setattr(user, final_key, json.loads(value))
+                except:
+                    setattr(user, final_key, [])
             else:
-                setattr(user, key, value)
+                setattr(user, final_key, value)
 
         return user
 

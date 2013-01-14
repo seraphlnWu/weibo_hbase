@@ -24,72 +24,25 @@ class Parser(object):
         raise NotImplementedError
 
 
-class JsonObjectParser(Parser):
-    '''      
-        a parser class for json object.
-    '''      
-             
-    payload_format = 'json'
-             
-    def __init__(self):
-        '''  
-        '''  
-        self.json = import_simplejson()
-
-    def parse(self, method, payload):
-        '''  
-            parse the payload
-        '''  
-        try: 
-            json = self.json.loads(payload)
-        except Exception as e:
-            print "Cannot parse the payload"
-            raise DataError("Failed to parse JSON object: %s", (e, ))
-
-        return json
-
-    def parse_error(self, method, payload):
-        '''  
-            parse the error payload
-        '''  
-        try: 
-            json = self.json.loads(payload)
-        except Exception as e:
-            print "Cannot parse the error payload"
-            raise DataError("Failed to parse JSON ERROR object: %s", (e, ))
-             
-        return json
-
-
-class ModelParser(JsonObjectParser):
+class ModelParser(Parser):
     '''
         parse a model 
     '''
     def __init__(self, model_factory=None):
-        JsonObjectParser.__init__(self)
         self.model_factory = model_factory or ModelFactory
 
     def parse(self, method, payload):
         try: 
-            if method.payload_type is None:
+            if method is None:
                 return
 
-            model = getattr(self.model_factory, method.payload_type)
+            model = getattr(self.model_factory, method)
         except AttributeError:
-            raise WeibopError(
-                'No model for this payload type: %s' % (method.payload_type, ))
+            raise DataError('No model for this payload type: %s' % (method))
 
-        json = JsonObjectParser.parse(self, method, payload)
-        if isinstance(json, tuple):
-            json, cursors = json
+        if isinstance(payload, list):
+            result = model.parse_list(payload[0], payload)
         else:
-            cursors = None
-             
-        if method.payload_list:
-            result = model.parse_list(method.api, json)
-        else:
-            result = model.parse(method.api, json)
-        if cursors:
-            return result, cursors
-        else:
-            return result
+            result = model.parse(payload, payload)
+
+        return result
