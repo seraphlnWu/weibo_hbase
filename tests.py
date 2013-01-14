@@ -4,7 +4,7 @@
 '''
 
 from smdata.models import InitTestData
-from parser import ModelParser
+from parser.parser import ModelParser
 
 
 def test_hbase_user():
