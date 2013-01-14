@@ -15,7 +15,4 @@ def test_hbase_user():
 
 
 if __name__ == '__main__':
-    '''
-        main function
-    '''
     test_hbase_user()
