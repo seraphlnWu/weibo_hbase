@@ -1,13 +1,14 @@
 # coding=utf8
+'''
+    transform models.
+'''
 
 import pymongo
 import happybase
 
-from datetime import datetime
-
 from parser.parser import ModelParser
 
-db = pymongo.Connection('localhost')['sandbox_mongo_5']
+MONGO_INSTANCE = pymongo.Connection('localhost')['sandbox_mongo_5']
 
 
 class HbaseInit(object):
@@ -18,6 +19,7 @@ class HbaseInit(object):
         '''
             init func.
         '''
+        self.connection = None
         self.startup_hbase(hbase_host, autoconnect)
 
 
@@ -162,6 +164,7 @@ class InitTestData(object):
         '''
             init func.
         '''
+        self.connection = None
         self.startup_hbase(hbase_host, autoconnect)
 
 
@@ -183,41 +186,13 @@ class InitTestData(object):
 
         model_parser = ModelParser()
         table = self.connection.table('users')
-        users = db.users.find()
+        users = MONGO_INSTANCE.users.find()
         for user in users:
             print user.get('_id'), model_parser.de_parse('attrs', 'user', user)
-            table.put(str(user.get('_id')), model_parser.de_parse('attrs', 'user', user))
-
-        '''
-        table.put(
-            'test_row_1',
-            {
-                'user_api:rt': u'refresh_token',
-                'user_api:exp': str(1234567890),
-                'user_api:tok': u'access_token',
-                'user_attrs:screen_name': u'seraphln',
-                'user_attrs:city': u'shijiazhuang',
-                'user_attrs:created_at': '2012-1-1',
-                'user_attrs:description': u'blablabla', 
-                'user_attrs:join_at': str('2013-1-1'),
-                'user_attrs:location': u'somewhere',
-                'user_attrs:url': 'http://www.seraphln.com',
-                'user_attrs:gender': str(1),
-                'user_attrs:province': u'hebei',
-                'user_attrs:profile_image_url': 'http://www.seraphln.com/pic',
-                'user_attrs:invalid': str(1),
-                'user_attrs:verified': str(0),
-                'user_attrs:sm_deleted': str(1),
-                'user_tasks:task_list': str([1, 2, 3]),
-                'user_tasks:fuids': str([{'a': 1,}, {'a': 2}]),
-                'user_tasks:comment_since_id': str(12345),
-                'user_tasks:flwr_update_time': '2013-1-2',
-                'user_tasks:mention_since_id': str(23456),
-                'user_tasks:inf_update_time': '2013-1-4',
-            },
-        )
-        '''
-        #return table.row('test_row_1')
+            table.put(
+                str(user.get('_id')),
+                model_parser.de_parse('attrs', 'user', user),
+            )
 
 
     def init_test_follow_relations(self):
@@ -264,7 +239,7 @@ class InitTestData(object):
                 'follower_attrs:domain': 'http://weibo.com/seraphln',
                 'follower_attrs:description': 'blablabla',
                 'follower_attrs:url': 'http://www.seraphln.com',
-                'follower_attrs:profile_image_url': 'http://www.seraphln.com/pic',
+                'follower_attrs:profile_image_url': 'http://www.seraphln.com/',
                 'follower_attrs:favourites_count': '4567',
                 'follower_attrs:created_at': '2013-1-5',
                 'follower_attrs:avatar': 'http://www.seraphln.com/avatar',
