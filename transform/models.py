@@ -185,9 +185,8 @@ class InitTestData(object):
         table = self.connection.table('users')
         users = db.users.find()
         for user in users:
-            del user['_id']
-            del user['id']
-            print user.get('_id'), model_parser.de_parse('attrs', user)
+            print user.get('_id'), model_parser.de_parse('attrs', 'user', user)
+            table.put(str(user.get('_id')), model_parser.de_parse('attrs', 'user', user))
 
         '''
         table.put(

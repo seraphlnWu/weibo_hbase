@@ -6,36 +6,18 @@ from utils import parse_datetime_from_hbase
 from utils import parse_boolean_from_hbase
 from utils import parse_int_from_hbase
 from utils import import_simplejson
-from utils import make_clumn_name
+from utils import make_column_name
 from utils import parse_datetime_into_hbase
 from utils import parse_boolean_into_hbase
 from utils import parse_int_into_hbase
+from utils import convert_data
+
+from config import USER_DATETIME_COLUMN_SET
+from config import USER_BOOLEAN_COLUMN_SET
+from config import USER_INT_COLUMN_SET
+from config import USER_LIST_COLUMN_SET
 
 
-USER_DATETIME_COLUMN_SET = {
-    'user_tasks:flwr_update_time',
-    'user_tasks:inf_update_time',
-    'user_attrs:created_at',
-    'user_attrs:join_at',
-}
-
-USER_BOOLEAN_COLUMN_SET = {
-    'user_attrs:invalid',
-    'user_attrs:sm_deleted',
-    'user_attrs:verified',
-}
-
-USER_INT_COLUMN_SET = {
-    'user_attrs:gender',
-    'user_tasks:mention_since_id',
-    'user_tasks:comment_since_id',
-    'user_api:exp',
-}
-
-USER_LIST_COLUMN_SET = {
-    'user_tasks:fuids',
-    'user_tasks:task_list',
-}
 
 class ResultSet(list):
     '''A list like object that holds results from hbase'''
@@ -124,18 +106,22 @@ class User(Model):
         '''
         result_dict = {}
         for key, value in json.iteritems():
-            key_name = make_clumn_name(prefix, key)
-            if key in USER_DATETIME_COLUMN_SET:
-                result_dict[key_name] = parse_datetime_into_hbase(value)
-            elif key_name in USER_BOOLEAN_COLUMN_SET:
-                result_dict[key_name] = parse_boolean_into_hbase(value)
-            elif key_name in USER_INT_COLUMN_SET:
-                result_dict[key_name] = parse_int_into_hbase(value)
-            elif key_name in USER_LIST_COLUMN_SET:
-                json = import_simplejson()
-                result_dict[key_name] = json.dumps(value)
+            if key in {'_id', 'id'}:
+                pass
             else:
-                result_dict[key_name] = value
+                key_name = make_column_name(prefix, key)
+                print key_name, value
+                if key_name in USER_DATETIME_COLUMN_SET:
+                    result_dict[key_name] = parse_datetime_into_hbase(value)
+                elif key_name in USER_BOOLEAN_COLUMN_SET:
+                    result_dict[key_name] = parse_boolean_into_hbase(value)
+                elif key_name in USER_INT_COLUMN_SET:
+                    result_dict[key_name] = parse_int_into_hbase(value)
+                elif key_name in USER_LIST_COLUMN_SET:
+                    json = import_simplejson()
+                    result_dict[key_name] = json.dumps(value)
+                else:
+                    result_dict[key_name] = convert_data(value)
 
         return result_dict
 

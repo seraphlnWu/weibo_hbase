@@ -4,6 +4,10 @@ common functions here.
 '''
 from datetime import datetime
 
+from config import USER_TASKS_COLUMN_FAMILY_SET
+from config import USER_ATTRS_COLUMN_FAMILY_SET
+from config import USER_API_COLUMN_FAMILY_SET
+
 import sm_log
 
 logger = sm_log.get_logger('weibo_hbase_utils')
@@ -82,8 +86,39 @@ def import_simplejson():
  
     return json
 
-def make_clumn_name(prefix, attr):
+
+def get_column_prefix(key):
+    '''
+        get the column name
+    '''
+    name = None
+    if key in USER_API_COLUMN_FAMILY_SET:
+        name = 'user_api'    
+    elif key in USER_ATTRS_COLUMN_FAMILY_SET:
+        name = 'user_attrs'
+    elif key in USER_TASKS_COLUMN_FAMILY_SET:
+        name = 'user_tasks'
+    else:
+        print 'blablabla'
+        print key
+        raise NotImplementedError
+
+    return name
+
+
+def make_column_name(prefix, attr):
     '''
         return a column name
     '''
-    return ':'.join([prefix, attr])
+    return ':'.join([get_column_prefix(attr), attr])
+
+
+def convert_data(o_value):
+    '''
+        convert the data
+    '''
+    if isinstance(o_value, unicode):
+        return o_value.encode('utf8')
+    else:
+        return str(o_value)
+            
