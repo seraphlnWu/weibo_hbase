@@ -2,11 +2,21 @@
 '''
     config file for parser
 '''
+
+IGNORE_SET = {
+    '_id',
+    'id',
+}
+
+###########################################################
+#################### user table ###########################
+###########################################################
 USER_DATETIME_COLUMN_SET = {
     'user_tasks:flwr_update_time',
     'user_tasks:inf_update_time',
     'user_attrs:created_at',
     'user_attrs:join_at',
+    'follow_attrs:created_at',
 }
 
 USER_BOOLEAN_COLUMN_SET = {
@@ -17,6 +27,7 @@ USER_BOOLEAN_COLUMN_SET = {
     'user_attrs:fix_priority',
     'user_attrs:fixed',
     'user_attrs:vidt',
+    'follow_attrs:sm_deleted',
 }
 
 USER_INT_COLUMN_SET = {
@@ -29,6 +40,14 @@ USER_INT_COLUMN_SET = {
     'user_tasks:latest_mention_id',
     'user_tasks:directmsg_since_id',
     'user_attrs:max_followbrand_count',
+    'follow_attrs:followers_count',
+    'follow_attrs:friends_count',
+    'follow_attrs:statuses_count',
+    'follow_attrs:follower_id',
+    'follow_attrs:sm_flwr_quality',
+    'follow_attrs:activeness',
+    'task_attrs:comment_count',
+    'task_attrs:repost_count',
 }
 
 USER_LIST_COLUMN_SET = {
@@ -101,8 +120,21 @@ USER_TASKS_COLUMN_FAMILY_SET = {
     'mention_keywords',
     'direct_msg_tasks',
 }
+###########################################################
+#################### end ##################################
+###########################################################
+FOLLOWBRAND_FOLLOW_ATTRS_SET = {
+    'created_at',
+    'sm_deleted',
+    'followers_count',
+    'friends_count',
+    'statuses_count',
+    'follower_id',
+    'sm_flwr_quality',
+    'activeness',
+}
 
-IGNORE_SET = {
-    '_id',
-    'id',
+FOLLOWBRAND_FOLLOW_TASK_SET = {
+    'comment_count',
+    'repost_count',
 }

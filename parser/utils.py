@@ -8,6 +8,9 @@ from config import USER_TASKS_COLUMN_FAMILY_SET
 from config import USER_ATTRS_COLUMN_FAMILY_SET
 from config import USER_API_COLUMN_FAMILY_SET
 
+from config import FOLLOWBRAND_FOLLOW_TASK_SET
+from config import FOLLOWBRAND_FOLLOW_ATTRS_SET
+
 import sm_log
 
 logger = sm_log.get_logger('weibo_hbase_utils')
@@ -87,13 +90,13 @@ def import_simplejson():
     return json
 
 
-def get_column_prefix(key):
+def get_user_column_prefix(key):
     '''
         get the column name
     '''
     name = None
     if key in USER_API_COLUMN_FAMILY_SET:
-        name = 'user_api'    
+        name = 'user_api'
     elif key in USER_ATTRS_COLUMN_FAMILY_SET:
         name = 'user_attrs'
     elif key in USER_TASKS_COLUMN_FAMILY_SET:
@@ -105,12 +108,41 @@ def get_column_prefix(key):
 
     return name
 
+def get_follow_relation_column_prefix(key):
+    '''
+        get the follow_relation column name
+    '''
+    name = None
+    if key in FOLLOWBRAND_FOLLOW_ATTRS_SET:
+        name = 'follow_attrs'
+    elif key in FOLLOWBRAND_FOLLOW_TASK_SET:
+        name = 'task_attrs'
+    else:
+        print 'blablabla'
+        print key
+        raise NotImplementedError
+
+    return name
+
+
+def get_followers_column_prefix(key):
+    '''
+        get followers column name
+    '''
+    pass
+
 
 def make_column_name(prefix, attr):
     '''
         return a column name
     '''
-    return ':'.join([get_column_prefix(attr), attr])
+    proc_dict = {
+        'users': get_user_column_prefix,
+        'follow_relation': get_follow_relation_column_prefix,
+        'followers': get_followers_column_prefix,
+    }
+
+    return ':'.join([proc_dict[prefix](attr), attr])
 
 
 def convert_data(o_value):
