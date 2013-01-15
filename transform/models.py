@@ -123,7 +123,13 @@ class HbaseInit(object):
                 repost_count,
             }
         '''
-        if self.connection.is_table_enabled('follow_relations'):
+        flag = False
+        try:
+            flag = self.connection.is_table_enabled('follow_relations')
+        except:
+            pass
+
+        if flag:
             self.connection.disable_table('follow_relations')
             self.connection.delete_table('follow_relations')
         else:
@@ -141,7 +147,13 @@ class HbaseInit(object):
         '''
             init the followers table. 
         '''
-        if self.connection.is_table_enabled('followers'):
+        flag = False
+        try:
+            flag = self.connection.is_table_enabled('followers')
+        except:
+            pass
+
+        if flag:
             self.connection.disable_table('followers')
             self.connection.delete_table('followers')
         else:
@@ -221,35 +233,24 @@ class InitTestData(object):
         print datetime.now() - a
 
 
-    def init_test_followers(self):
+    def insert_test_followers(self):
         '''
             init a test followers 
         '''
+        model_parser = ModelParser()
         table = self.connection.table('followers')
-        table.put(
-            'followers',
-            {
-                'follower_attrs:id' : '1234567890',
-                'follower_attrs:sm_update_time': '2012-11-12',
-                'follower_attrs:name': 'seraphln',
-                'follower_attrs:gender': '1',
-                'follower_attrs:province': 'hebei',
-                'follower_attrs:city': 'handan',
-                'follower_attrs:location': 'somewhere',
-                'follower_attrs:friends_count': '1234',
-                'follower_attrs:follower_attrs': '2345',
-                'follower_attrs:statuses_count': '3456',
-                'follower_attrs:tags': '80hou,dota',
-                'follower_attrs:domain': 'http://weibo.com/seraphln',
-                'follower_attrs:description': 'blablabla',
-                'follower_attrs:url': 'http://www.seraphln.com',
-                'follower_attrs:profile_image_url': 'http://www.seraphln.com/',
-                'follower_attrs:favourites_count': '4567',
-                'follower_attrs:created_at': '2013-1-5',
-                'follower_attrs:avatar': 'http://www.seraphln.com/avatar',
-                'follower_attrs:fme': '1',
-                'follower_attrs:vrson': 'I just want a V',
-                'follower_attrs:online': '1',
-                'follower_attrs:bfcnt': '15',
-            }
-        )
+        followers = MONGO_INSTANCE.followers.find()
+        from datetime import datetime
+        a = datetime.now()
+        for cur_follower in followers:
+            print cur_follower.get('_id'), model_parser.de_parse('followers', 'followers', cur_follower)
+            table.put(
+                str(cur_follower.get('_id')),
+                model_parser.de_parse(
+                    'followers',
+                    'followers',
+                    cur_follower,
+                )
+            )
+        print followers.count()
+        print datetime.now() - a

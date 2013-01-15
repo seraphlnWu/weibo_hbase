@@ -17,6 +17,8 @@ USER_DATETIME_COLUMN_SET = {
     'user_attrs:created_at',
     'user_attrs:join_at',
     'follow_attrs:created_at',
+    'follower_attrs:sm_update_time',
+    'follower_attrs:created_at',
 }
 
 USER_BOOLEAN_COLUMN_SET = {
@@ -28,6 +30,8 @@ USER_BOOLEAN_COLUMN_SET = {
     'user_attrs:fixed',
     'user_attrs:vidt',
     'follow_attrs:sm_deleted',
+    'follower_attrs:fme',
+    'follower_attrs:verified',
 }
 
 USER_INT_COLUMN_SET = {
@@ -48,6 +52,15 @@ USER_INT_COLUMN_SET = {
     'follow_attrs:activeness',
     'task_attrs:comment_count',
     'task_attrs:repost_count',
+    'follower_attrs:bfcnt',
+    'follower_attrs:favourites_count',
+    'follower_attrs:statuses_count',
+    'follower_attrs:follower_count',
+    'follower_attrs:friends_count',
+    'follower_attrs:id',
+    'follower_attrs:gender',
+    'follower_attrs:fme',
+    'follower_attrs:online',
 }
 
 USER_LIST_COLUMN_SET = {
@@ -56,6 +69,7 @@ USER_LIST_COLUMN_SET = {
     'user_tasks:buzz_keywords',
     'user_tasks:mention_keywords',
     'user_tasks:direct_msg_tasks',
+    'follower_attrs:tags',
 }
 
 USER_API_COLUMN_FAMILY_SET = {
@@ -123,7 +137,7 @@ USER_TASKS_COLUMN_FAMILY_SET = {
 ###########################################################
 #################### end ##################################
 ###########################################################
-FOLLOWBRAND_FOLLOW_ATTRS_SET = {
+FOLLOW_RELATION_FOLLOW_ATTRS_SET = {
     'created_at',
     'sm_deleted',
     'followers_count',
@@ -134,7 +148,7 @@ FOLLOWBRAND_FOLLOW_ATTRS_SET = {
     'activeness',
 }
 
-FOLLOWBRAND_FOLLOW_TASK_SET = {
+FOLLOW_RELATION_FOLLOW_TASK_SET = {
     'comment_count',
     'repost_count',
 }

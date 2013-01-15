@@ -14,10 +14,10 @@ def test_hbase_user():
     '''
     hbase_instance = InitTestData('192.168.122.103')
     hi = HbaseInit('192.168.122.103')
-    hi.init_follow_relations()
-    tmp_record = hbase_instance.insert_test_follow_relations()
+    hi.init_followers()
+    tmp_record = hbase_instance.insert_test_followers()
     mp = ModelParser()
-    result = mp.parse('user', tmp_record)
+    result = mp.parse('followers', tmp_record)
     print result
     import ipdb;ipdb.set_trace()
     print 'done!'

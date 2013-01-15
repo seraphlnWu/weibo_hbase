@@ -110,7 +110,6 @@ class User(Model):
                 pass
             else:
                 key_name = make_column_name(prefix, key)
-                print key_name, value
                 if key_name in USER_DATETIME_COLUMN_SET:
                     result_dict[key_name] = parse_datetime_into_hbase(value)
                 elif key_name in USER_BOOLEAN_COLUMN_SET:
@@ -192,7 +191,87 @@ class FollowRelations(Model):
                 pass
             else:
                 key_name = make_column_name(prefix, key)
-                print key_name, value
+                if key_name in USER_DATETIME_COLUMN_SET:
+                    result_dict[key_name] = parse_datetime_into_hbase(value)
+                elif key_name in USER_BOOLEAN_COLUMN_SET:
+                    result_dict[key_name] = parse_boolean_into_hbase(value)
+                elif key_name in USER_INT_COLUMN_SET:
+                    result_dict[key_name] = parse_int_into_hbase(value)
+                elif key_name in USER_LIST_COLUMN_SET:
+                    json = import_simplejson()
+                    result_dict[key_name] = json.dumps(value)
+                else:
+                    result_dict[key_name] = convert_data(value)
+
+        return result_dict
+
+
+    @classmethod
+    def parse_list(cls, api, json_list):
+        '''
+            parse a list of model.
+        '''
+        if isinstance(json_list, list):
+            item_list = json_list
+        else:
+            item_list = json_list['users']
+    
+        results = ResultSet([cls.parse(api, obj) for obj in item_list])
+        return results
+
+    @classmethod
+    def de_parse_list(cls, prefix, json_list):
+        '''
+            de parse a list of data
+        '''
+        if isinstance(json_list, list):
+            item_list = json_list
+        else:
+            item_list = json_list['users']
+
+        results = ResultSet([cls.de_parse(prefix, obj) for obj in item_list])
+
+
+class Followers(Model):
+    '''
+        follow_relations class.
+    '''
+    @classmethod
+    def parse(cls, api, json):
+        '''
+            inherit from Model and rewrite the parse func
+        '''
+        user = cls(api)
+        for key, value in json.items():
+            final_key = key.split(':')[1]
+            if key in USER_DATETIME_COLUMN_SET:
+                setattr(user, final_key, parse_datetime_from_hbase(value))
+            elif key in USER_BOOLEAN_COLUMN_SET:
+                setattr(user, final_key, parse_boolean_from_hbase(value))
+            elif key in USER_INT_COLUMN_SET:
+                setattr(user, final_key, parse_int_from_hbase(value))
+            elif key in USER_LIST_COLUMN_SET:
+                json = import_simplejson()
+                try:
+                    setattr(user, final_key, json.loads(value))
+                except:
+                    setattr(user, final_key, [])
+            else:
+                setattr(user, final_key, value)
+
+        return user
+
+    @classmethod
+    def de_parse(cls, prefix, json):
+        '''
+            de parse
+        '''
+        result_dict = {}
+        for key, value in json.iteritems():
+            if key in {'_id'}:
+                pass
+            else:
+                key_name = make_column_name(prefix, key)
                 if key_name in USER_DATETIME_COLUMN_SET:
                     result_dict[key_name] = parse_datetime_into_hbase(value)
                 elif key_name in USER_BOOLEAN_COLUMN_SET:
@@ -242,3 +321,4 @@ class ModelFactory(object):
     '''
     user = User
     follow_relation = FollowRelations
+    followers = Followers

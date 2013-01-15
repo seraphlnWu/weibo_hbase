@@ -8,8 +8,8 @@ from config import USER_TASKS_COLUMN_FAMILY_SET
 from config import USER_ATTRS_COLUMN_FAMILY_SET
 from config import USER_API_COLUMN_FAMILY_SET
 
-from config import FOLLOWBRAND_FOLLOW_TASK_SET
-from config import FOLLOWBRAND_FOLLOW_ATTRS_SET
+from config import FOLLOW_RELATION_FOLLOW_ATTRS_SET
+from config import FOLLOW_RELATION_FOLLOW_TASK_SET
 
 import sm_log
 
@@ -129,7 +129,7 @@ def get_followers_column_prefix(key):
     '''
         get followers column name
     '''
-    pass
+    return 'follower_attrs'
 
 
 def make_column_name(prefix, attr):
