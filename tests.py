@@ -4,6 +4,7 @@
 '''
 
 from transform.models import InitTestData
+from transform.models import HbaseInit
 from parser.parser import ModelParser
 
 
@@ -12,7 +13,9 @@ def test_hbase_user():
         测试hbase init user
     '''
     hbase_instance = InitTestData('192.168.122.103')
-    tmp_record = hbase_instance.insert_test_user()
+    hi = HbaseInit('192.168.122.103')
+    hi.init_follow_relations()
+    tmp_record = hbase_instance.insert_test_follow_relations()
     mp = ModelParser()
     result = mp.parse('user', tmp_record)
     print result

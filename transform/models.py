@@ -195,15 +195,30 @@ class InitTestData(object):
             )
 
 
-    def init_test_follow_relations(self):
+    def insert_test_follow_relations(self):
         '''
             insert a new follow_relations test data.
         '''
         model_parser = ModelParser()
         table = self.connection.table('follow_relations')
         follow_relations = MONGO_INSTANCE.follow_relations.find()
+        from datetime import datetime
+        a = datetime.now()
         for cur_relation in follow_relations:
             print cur_relation.get('user_id'), model_parser.de_parse('follow_relation', 'follow_relation', cur_relation)
+            table.put(
+                '_'.join([
+                    str(cur_relation.get('user_id')),
+                    str(cur_relation.get('follower_id')),
+                ]),
+                model_parser.de_parse(
+                    'follow_relation',
+                    'follow_relation',
+                    cur_relation,
+                )
+            )
+        print follow_relations.count()
+        print datetime.now() - a
 
 
     def init_test_followers(self):
