@@ -1,0 +1,6 @@
+# coding=utf8
+
+MONGODB_HOST = '117.79.230.104'
+MONGODB_PORT = 27017
+
+MONGODB_DBNAME = 'sandbox_mongo_5'
