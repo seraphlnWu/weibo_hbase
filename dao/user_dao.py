@@ -19,4 +19,4 @@ def get_user_by_id(uid):
         根据传入的uid获取相应的user信息
     '''
     mp = ModelParser()
-    return mp.parse('users', USER_TABLE.row(str(uid)))
+    return mp.parse('user', USER_TABLE.row(str(uid)))
