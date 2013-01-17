@@ -3,6 +3,8 @@
 from utils import MONGODB_INSTANCE
 from utils import HBASE_INSTANCE
 
+from weibo_dao.parser.parser import ModelParser
+
 USER_TABLE = HBASE_INSTANCE.table('users')
 
 def get_users():
@@ -16,4 +18,5 @@ def get_user_by_id(uid):
     '''
         根据传入的uid获取相应的user信息
     '''
-    return USER_TABLE.row(str(uid))
+    mp = ModelParser()
+    return mp.parse('users', USER_TABLE.row(str(uid)))
