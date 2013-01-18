@@ -11,7 +11,8 @@ def get_users():
     '''
         获取全部的用户信息列表    
     '''
-    return USER_TABLE.scan()
+    mp = ModelParser()
+    return [mp.parse('user', USER_TABLE.scan())]
 
 
 def get_user_by_id(uid):

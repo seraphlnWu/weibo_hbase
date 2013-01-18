@@ -81,6 +81,7 @@ class User(Model):
         '''
         user = cls(api)
         for key, value in json.items():
+            print key, value
             final_key = key.split(':')[1]
             if key in USER_DATETIME_COLUMN_SET:
                 setattr(user, final_key, parse_datetime_from_hbase(value))
