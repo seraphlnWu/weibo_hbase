@@ -14,8 +14,8 @@ def test_hbase_user():
     '''
     hbase_instance = InitTestData('192.168.122.103')
     hi = HbaseInit('192.168.122.103')
-    hi.init_followers()
-    tmp_record = hbase_instance.insert_test_followers()
+    hi.init_user()
+    tmp_record = hbase_instance.insert_test_user()
     mp = ModelParser()
     result = mp.parse('followers', tmp_record)
     print result

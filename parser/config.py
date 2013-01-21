@@ -35,6 +35,7 @@ USER_BOOLEAN_COLUMN_SET = {
 }
 
 USER_INT_COLUMN_SET = {
+    'user_attrs:id',
     'user_tasks:mention_since_id',
     'user_tasks:comment_since_id',
     'user_api:exp',

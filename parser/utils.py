@@ -102,8 +102,6 @@ def get_user_column_prefix(key):
     elif key in USER_TASKS_COLUMN_FAMILY_SET:
         name = 'user_tasks'
     else:
-        print 'blablabla'
-        print key
         raise NotImplementedError
 
     return name
@@ -118,8 +116,6 @@ def get_follow_relation_column_prefix(key):
     elif key in FOLLOWBRAND_FOLLOW_TASK_SET:
         name = 'task_attrs'
     else:
-        print 'blablabla'
-        print key
         raise NotImplementedError
 
     return name
