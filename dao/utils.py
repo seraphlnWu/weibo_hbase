@@ -7,6 +7,8 @@
 import pymongo
 import happybase
 
+from datetime import datetime
+
 from config import MONGODB_HOST
 from config import MONGODB_PORT
 from config import MONGODB_DBNAME
@@ -35,3 +37,11 @@ def get_hbase_instance(hbase_host=HBASE_HOST, autoconnect=True):
 MONGODB_INSTANCE = get_db()
 
 HBASE_INSTANCE = get_hbase_instance()
+
+
+def today_datetime():
+    """ 返回今天的datetime时间 """
+    return datetime.strptime(
+        '%04d%02d%02d' % (lambda x: (x.year, x.month, x.day))(
+            datetime.now()),
+        '%Y%m%d')
