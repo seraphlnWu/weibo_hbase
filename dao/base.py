@@ -14,14 +14,14 @@ class BaseQuery(object):
         ''' query with args or kwargs '''
         raise NotImplementedError
 
-    def query_one(self, **kwargs):
+    def query_one(self, *args, **kwargs):
         ''' query one result with kwargs '''
         raise NotImplementedError
 
-    def put_one(self, **kwargs):
+    def put_one(self, *args, **kwargs):
         ''' put one record with kwargs '''
         raise NotImplementedError
 
-    def delete(self, **kwargs):
+    def delete(self, *args, **kwargs):
         ''' delete records with kwargs '''
         raise NotImplementedError

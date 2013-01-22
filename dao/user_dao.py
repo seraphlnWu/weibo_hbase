@@ -12,6 +12,8 @@ from influence_dao import get_cur_influence
 
 from weibo_dao.parser.parser import ModelParser
 
+from weibo_dao.parser.utils import make_column_name
+
 
 class UserDao(BaseQuery):
     ''' inherit from base query '''
@@ -25,16 +27,25 @@ class UserDao(BaseQuery):
         ''' query users '''
         return [self.m_parser('user', self.table.scan())]
 
-    def query_one(self, **kwargs):
+    def query_one(self, *args, **kwargs):
         ''' query one user '''
-        
-        pass
+        column_list = []
+        if args:
+            column_list = [make_column_name('users', attr) for attr in args]
+        else:
+            pass
 
-    def put_one(self, **kwargs):
+        return self.m_parser(
+            'user',
+            self.table.row(str(kwargs.get('id'), columns=column_list)),
+        )
+
+
+    def put_one(self, *args, **kwargs):
         ''' put / update one user '''
         pass
 
-    def delete(self, **kwargs):
+    def delete(self, *args, **kwargs):
         ''' delete records '''
         pass
 
@@ -47,8 +58,8 @@ def get_users():
 
 def get_user_by_id(uid):
     ''' 根据传入的uid获取相应的user信息 '''
-    mp = ModelParser()
-    return mp.parse('user', USER_TABLE.row(str(uid)))
+    user_dao = UserDao()
+    return user_dao.query_one({'id': uid})
 
 
 def get_user_by_keyword(uid, *keywords):
