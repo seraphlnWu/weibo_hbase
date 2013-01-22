@@ -13,27 +13,36 @@ from influence_dao import get_cur_influence
 from weibo_dao.parser.parser import ModelParser
 
 
-USER_TABLE = HBASE_INSTANCE.table('users')
-
-
 class UserDao(BaseQuery):
     ''' inherit from base query '''
 
     def __init__(self):
         ''' init func '''
         self.m_parser = ModelParser()
+        self.table = HBASE_INSTANCE.table('users')
 
     def query(self, *args, **kwargs):
         ''' query users '''
-        pass
+        return [self.m_parser('user', self.table.scan())]
 
     def query_one(self, **kwargs):
         ''' query one user '''
+        
+        pass
+
+    def put_one(self, **kwargs):
+        ''' put / update one user '''
+        pass
+
+    def delete(self, **kwargs):
+        ''' delete records '''
+        pass
+
 
 def get_users():
     ''' 获取全部的用户信息列表 '''
-    mp = ModelParser()
-    return [mp.parse('user', USER_TABLE.scan())]
+    user_dao = UserDao()
+    return user_dao.query()
 
 
 def get_user_by_id(uid):
