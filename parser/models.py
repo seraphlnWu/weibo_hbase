@@ -80,22 +80,23 @@ class User(Model):
             inherit from Model and rewrite the parse func
         '''
         user = cls(api)
+        user = {}
         for key, value in json.items():
             final_key = key.split(':')[1]
             if key in USER_DATETIME_COLUMN_SET:
-                setattr(user, final_key, parse_datetime_from_hbase(value))
+                user[final_key] = parse_datetime_from_hbase(value)
             elif key in USER_BOOLEAN_COLUMN_SET:
-                setattr(user, final_key, parse_boolean_from_hbase(value))
+                user[final_key] = parse_boolean_from_hbase(value)
             elif key in USER_INT_COLUMN_SET:
-                setattr(user, final_key, parse_int_from_hbase(value))
+                user[final_key] = parse_int_from_hbase(value)
             elif key in USER_LIST_COLUMN_SET:
                 json = import_simplejson()
                 try:
-                    setattr(user, final_key, json.loads(value))
+                    user[final_key] = json.loads(value)
                 except:
-                    setattr(user, final_key, [])
+                    user[final_key] = []
             else:
-                setattr(user, final_key, value)
+                user[final_key] = value
 
         return user
 
@@ -106,7 +107,7 @@ class User(Model):
         '''
         result_dict = {}
         for key, value in json.iteritems():
-            if key in {'_id', 'id'}:
+            if key in {'_id', }:
                 pass
             else:
                 key_name = make_column_name(prefix, key)
