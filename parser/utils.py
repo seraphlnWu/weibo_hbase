@@ -153,4 +153,3 @@ def convert_data(o_value):
         return o_value.encode('utf8')
     else:
         return str(o_value)
-            

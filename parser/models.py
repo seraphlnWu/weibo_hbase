@@ -106,7 +106,7 @@ class User(Model):
         '''
         result_dict = {}
         for key, value in json.iteritems():
-            if key in {'_id', 'id'}:
+            if key in {'_id'}:
                 pass
             else:
                 key_name = make_column_name(prefix, key)

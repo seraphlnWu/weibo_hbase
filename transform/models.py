@@ -166,6 +166,30 @@ class HbaseInit(object):
             }
         )
 
+    def init_test_table(self):
+        '''
+            init the test table. 
+        '''
+        flag = False
+        try:
+            flag = self.connection.is_table_enabled('test_put')
+        except:
+            pass
+
+        if flag:
+            self.connection.disable_table('test_put')
+            self.connection.delete_table('test_put')
+        else:
+            pass
+        
+        self.connection.create_table(
+            'test_put',
+            {
+                'some_attr': dict(),
+            }
+        )
+        print 'done!'
+
 
 class InitTestData(object):
     '''
@@ -200,11 +224,12 @@ class InitTestData(object):
         table = self.connection.table('users')
         users = MONGO_INSTANCE.users.find()
         for user in users:
-            print user.get('_id'), model_parser.de_parse('users', 'user', user)
             table.put(
                 str(user.get('_id')),
-                model_parser.de_parse('attrs', 'user', user),
+                model_parser.de_parse('users', 'user', user),
             )
+            if user.get('id') == 1969092405:
+                print 'blablabla'
 
 
     def insert_test_follow_relations(self):
@@ -237,13 +262,15 @@ class InitTestData(object):
         '''
             init a test followers 
         '''
+        BATCH_SIZE = 10000
         model_parser = ModelParser()
         table = self.connection.table('followers')
         followers = MONGO_INSTANCE.followers.find()
+        #b = table.batch(batch_size=BATCH_SIZE)
         from datetime import datetime
         a = datetime.now()
         for cur_follower in followers:
-            print cur_follower.get('_id'), model_parser.de_parse('followers', 'followers', cur_follower)
+            #print cur_follower.get('_id'), model_parser.de_parse('followers', 'followers', cur_follower)
             table.put(
                 str(cur_follower.get('_id')),
                 model_parser.de_parse(
@@ -251,6 +278,26 @@ class InitTestData(object):
                     'followers',
                     cur_follower,
                 )
+            )
+        print followers.count()
+        print datetime.now() - a
+
+
+    def insert_test_attrs(self):
+        '''
+            init a test followers 
+        '''
+        BATCH_SIZE = 10000
+        table = self.connection.table('test_put')
+        followers = MONGO_INSTANCE.followers.find()
+        followers_ids = [x.get('_id') for x in followers]
+        #b = table.batch(batch_size=BATCH_SIZE)
+        from datetime import datetime
+        a = datetime.now()
+        for cur_id in followers_ids:
+            table.put(
+                str(cur_id),
+                {'some_attr:attr': "blablabla"},
             )
         print followers.count()
         print datetime.now() - a
