@@ -79,6 +79,7 @@ USER_API_COLUMN_FAMILY_SET = {
 }
 
 USER_ATTRS_COLUMN_FAMILY_SET = {
+    'id',
     'screen_name',
     'city',
     'created_at',
