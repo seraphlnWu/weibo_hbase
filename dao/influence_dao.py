@@ -70,3 +70,8 @@ def check_influence_list(histories):
             pass
 
     return his_list
+
+
+def get_followers_location_distr(uid, reftime=None):
+    '获取粉丝地理分布'
+    return get_cur_influence(uid).get('followers_location_dist', {})

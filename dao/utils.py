@@ -51,7 +51,7 @@ def compare_value(o_value, default_value, logic_word='and'):
     result = None
     if logic_word == 'and':
         result = o_value if o_value else default_value
-    elif logic_word = 'not':
+    elif logic_word == 'not':
         result = o_value if not o_value else default_value
 
     return result

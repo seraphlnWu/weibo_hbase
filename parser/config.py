@@ -66,6 +66,7 @@ USER_INT_COLUMN_SET = {
 USER_LIST_COLUMN_SET = {
     'user_tasks:fuids',
     'user_tasks:task_list',
+    'user_tasks:tasks',
     'user_tasks:buzz_keywords',
     'user_tasks:mention_keywords',
     'user_tasks:direct_msg_tasks',

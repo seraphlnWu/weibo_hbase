@@ -39,6 +39,13 @@ def get_user_info(uid, default=['id', 'screen_name']):
         for cur_key in default
     ])
 
+
+def get_tasks(uid):
+    ''' get a task list by uid '''
+    cur_user = get_user_by_id(uid)
+    return cur_user.get('tasks', [])
+
+
 def get_user(uid):
     '''
         获取用户基本信息，
