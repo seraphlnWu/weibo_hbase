@@ -1,5 +1,8 @@
 # coding=utf8
 
+from base import BaseQuery
+from base import ResultList
+
 from utils import MONGODB_INSTANCE
 from utils import HBASE_INSTANCE
 
@@ -12,6 +15,21 @@ from weibo_dao.parser.parser import ModelParser
 
 USER_TABLE = HBASE_INSTANCE.table('users')
 
+
+class UserDao(BaseQuery):
+    ''' inherit from base query '''
+
+    def __init__(self):
+        ''' init func '''
+        self.m_parser = ModelParser()
+
+    def query(self, *args, **kwargs):
+        ''' query users '''
+        pass
+
+    def query_one(self, **kwargs):
+        ''' query one user '''
+
 def get_users():
     ''' 获取全部的用户信息列表 '''
     mp = ModelParser()
@@ -23,6 +41,7 @@ def get_user_by_id(uid):
     mp = ModelParser()
     return mp.parse('user', USER_TABLE.row(str(uid)))
 
+
 def get_user_by_keyword(uid, *keywords):
     ''' 根据传入的uid列表获取相应的user信息 '''
     cur_user = get_user_by_id(uid)
@@ -30,6 +49,7 @@ def get_user_by_keyword(uid, *keywords):
         (cur_key, cur_user.get(cur_key, None))
         for cur_key in keywords
     ])
+
 
 def get_user_info(uid, default=['id', 'screen_name']):
     ''' 获取用户基本信息 '''
