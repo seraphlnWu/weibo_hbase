@@ -102,11 +102,7 @@ def get_user(uid):
     resultdict['followers_count'] = influence.get('followers_count', 0)
     resultdict['statuses_count'] = influence.get('statuses_count', 0)
     resultdict['influence'] = influence.get('influence', 0)
-    resultdict['fans_quality'] = compare_value(
-        resultdict['followers_count'],
-        resultdict['influence']/resultdict['followers_count'],
-        'not',
-    )
+    resultdict['fans_quality'] = resultdict['influence']/resultdict['followers_count'] if resultdict['followers_count'] else 0
     resultdict['account_activeness'] = influence.get('account_activeness', 0)
     resultdict['followers_activeness'] = influence.get('followers_activeness', 0)
     resultdict['followers_quality_dist'] = influence.get('followers_quality_dist', {})
