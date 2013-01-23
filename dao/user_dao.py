@@ -1,5 +1,7 @@
 # coding=utf8
 
+from datetime import datetime
+
 from base import BaseQuery
 from base import ResultList
 
@@ -35,15 +37,15 @@ class UserDao(BaseQuery):
         else:
             pass
 
-        return self.m_parser(
+        return self.m_parser.parse(
             'user',
-            self.table.row(str(kwargs.get('id'), columns=column_list)),
+            self.table.row(str(kwargs.get('id')), columns=column_list),
         )
-
 
     def put_one(self, *args, **kwargs):
         ''' put / update one user '''
-        pass
+        row_key = kwargs.pop('id')
+        self.table.put(str(row_key), self.m_parser.de_parse(kwargs))
 
     def delete(self, *args, **kwargs):
         ''' delete records '''
@@ -59,31 +61,25 @@ def get_users():
 def get_user_by_id(uid):
     ''' 根据传入的uid获取相应的user信息 '''
     user_dao = UserDao()
-    return user_dao.query_one({'id': uid})
+    return user_dao.query_one(**{'id': uid})
 
 
 def get_user_by_keyword(uid, *keywords):
     ''' 根据传入的uid列表获取相应的user信息 '''
-    cur_user = get_user_by_id(uid)
-    return dict([
-        (cur_key, cur_user.get(cur_key, None))
-        for cur_key in keywords
-    ])
+    user_dao = UserDao()
+    return user_dao.query_one(*keywords, **{'id': uid})
 
 
 def get_user_info(uid, default=['id', 'screen_name']):
     ''' 获取用户基本信息 '''
-    cur_user = get_user_by_id(uid)
-    return dict([
-        (cur_key, cur_user.get(cur_key, None))
-        for cur_key in default
-    ])
+    user_dao = UserDao()
+    return user_dao.query_one(*default, **{'id': uid})
 
 
 def get_tasks(uid):
     ''' get a task list by uid '''
-    cur_user = get_user_by_id(uid)
-    return cur_user.get('tasks', [])
+    user_dao = UserDao()
+    return user_dao.query_one(*['tasks'], **{'id': uid}) or []
 
 
 def get_user(uid):
@@ -92,7 +88,8 @@ def get_user(uid):
         若库中没有用户记录，则按照
         new_user参数初始化用户基本信息。
     '''
-    resultdict = get_user_by_id(uid)
+    user_dao = UserDao()
+    resultdict = user_dao.query_one(**{"id": uid})
 
     if not resultdict:
         return {}
@@ -119,3 +116,45 @@ def get_user(uid):
         resultdict['url'] = ''
 
     return resultdict
+
+
+def add_task(uid, task):
+    ''' 添加一个新的待发送的微博 '''
+    task_list = get_tasks(uid)
+    task_list.append(task)
+    task_list.sort(key=lambda x:x.get('eta'))
+
+    task_length = len(task_list)
+    cur_index = task_list.index(task)
+    k = cur_index + 1  # if cur_index < len(task_list)-1 else cur_index
+    j = cur_index - 1  # if cur_index > 0 else 0
+
+    if any([
+        (j >= 0) and (task['message'] == task_list[j].get("message")),
+        k < task_length and (task['message'] == task_list[k]["message"]),
+        (j >= 0 and (task['eta'] - task_list[j].get('eta')) < 60),
+        (k < task_length and (task['eta'] - task_list[k]['eta']) < 60),
+    ]):
+        return False
+    else:
+        user_dao = UserDao()
+        user_dao.put_one(**{'id': uid, 'tasks': task_list, })
+
+        return True
+
+
+def del_task(uid, task_timestamp, flag='tid'):
+    ''' 删除一个待发送的微博 '''
+    task_list = get_tasks(uid)
+
+    for i, cur_task in enumerate(task_list):
+        if cur_task.get(flag) == task_timestamp:
+            del task_list[i]
+            break
+    else:
+        return True
+
+    user_dao = UserDao()
+    user_dao.put_one(**{'id': uid, 'tasks': task_list, })
+
+    return True

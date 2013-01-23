@@ -4,6 +4,8 @@ from utils import MONGODB_INSTANCE
 
 from influence_dao import get_cur_influence
 
+from datetime import datetime
+
 
 def get_followers_location_distr(uid, reftime=None):
     '''获取粉丝地理分布'''
@@ -48,3 +50,34 @@ def get_followbrand_followers_quality_distr(uid):
         pass
 
     return result
+
+
+def get_last_login_time_records(admaster_user):
+    results = MONGODB_INSTANCE.login_time_records.find({
+        "user_id":admaster_user.id
+    }).sort("at", -1).limit(1)
+
+    if results.count():
+        return results[0]
+    else:
+        return None
+
+
+def save_login_time_records(admaster_user):
+    ''' 保存一条登陆记录 '''
+    now = datetime.now()
+    record = get_last_login_time_records(admaster_user)
+
+    if any([
+        not record,
+        (now-record['at']).seconds >= 5*60,
+    ]):
+        MONGODB_INSTANCE.login_time_records.insert(
+            {
+                "user_id": admaster_user.id,
+                 "name": admaster_user.username,
+                 "at":now,
+            },
+            safe=True,
+        )
+

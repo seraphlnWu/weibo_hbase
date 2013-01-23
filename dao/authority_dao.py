@@ -33,3 +33,14 @@ def get_vidt(uid):
         pass
 
     return result
+
+
+def get_perm(username):
+    ''' 查看一个用户是否拥有数据中心的权限 '''
+    return MONGODB_INSTANCE.dt_perm.find_one({'username': username}) or {}
+
+
+def get_pm_benchmark(username):
+    ''' 查看一个中户是否拥有benchmark的权限 '''
+    tmp_res = MONGODB_INSTANCE.pm_benchmark.find_one({'_id': username})
+    return tmp_res.get('uw', 0) if tmp_res else 0
