@@ -81,3 +81,74 @@ def save_login_time_records(admaster_user):
             safe=True,
         )
 
+
+def get_hotwords_graph(
+    uid,
+    total_count=30,
+    search_from="mentions_hotwords",
+    flag='only',
+):
+    ''' 获取一个账号的评论高频词列表 '''
+    hotwords = db[search_from].find_one({
+        'sm_user_id': uid,
+        'f_date': get_all_start(),
+        'type': 'all',
+    })
+
+    result_list = getattr(hotwords, 'get', lambda x, y:[])('statistic', [])
+
+    if result_list:
+        tmp_result_list = [
+            {
+                "direction": cur_word, 
+                "value": int(float(cur_count)/result_list[0][1] * 100),
+                "description" : cur_count, 
+            }
+            for (cur_word, cur_count, cur_o, cur_r) in result_list[:total_count]
+        ]
+    else:
+        tmp_result_list = []
+
+    shuffle(tmp_result_list)
+    if flag == 'only':
+        return tmp_result_list
+    else:
+        result_dict = {'data': tmp_result_list}
+        return result_dict
+
+
+def get_hotwords_search(
+    uid,
+    h_type='all',
+    total_count=10,
+    search_from='buzz_hotwords',
+):
+    '''
+        获取热词记录
+        input:
+            - uid: user id
+            - h_type: week, month, all
+            - total_count: 10, 25
+            - search_from: buzz_hotwords, mention_hotwords,
+                            directmsg_hotwords
+        output:
+            - [(, , ), (, , )...]
+    '''
+    search_dict = {
+        'week': get_week_start, 
+        'month': get_month_start,
+        'all': get_all_start,
+    }
+
+    hotwords = db[search_from].find_one({
+        'sm_user_id': uid,
+        'f_date': search_dict[h_type](),
+        'type': h_type
+    })
+
+    try:
+        result_list = hotwords.get('statistic', [])
+    except AttributeError:
+        result_list = []
+
+    return result_list[:total_count]

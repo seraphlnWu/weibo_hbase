@@ -19,6 +19,8 @@ USER_DATETIME_COLUMN_SET = {
     'follow_attrs:created_at',
     'follower_attrs:sm_update_time',
     'follower_attrs:created_at',
+    'comment_attrs:created_at',
+    'comment_attrs:ct',
 }
 
 USER_BOOLEAN_COLUMN_SET = {
@@ -32,6 +34,8 @@ USER_BOOLEAN_COLUMN_SET = {
     'follow_attrs:sm_deleted',
     'follower_attrs:fme',
     'follower_attrs:verified',
+    'comment_attrs:flw',
+    'comment_attrs:vfd',
 }
 
 USER_INT_COLUMN_SET = {
@@ -61,6 +65,14 @@ USER_INT_COLUMN_SET = {
     'follower_attrs:gender',
     'follower_attrs:fme',
     'follower_attrs:online',
+    'comment_attrs:id',
+    'comment_attrs:sft',
+    'comment_attrs:ft',
+    'comment_attrs:sct',
+    'comment_attrs:user_id',
+    'comment_attrs:status_id',
+    'comment_attrs:sm_user_id',
+    'comment_attrs:reply_comment_id',
 }
 
 USER_LIST_COLUMN_SET = {
@@ -71,6 +83,7 @@ USER_LIST_COLUMN_SET = {
     'user_tasks:mention_keywords',
     'user_tasks:direct_msg_tasks',
     'follower_attrs:tags',
+    'comment_attrs:buzz_keywords',
 }
 
 USER_API_COLUMN_FAMILY_SET = {

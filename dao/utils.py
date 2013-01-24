@@ -8,6 +8,7 @@ import pymongo
 import happybase
 
 from datetime import datetime
+import time
 
 from config import MONGODB_HOST
 from config import MONGODB_PORT
@@ -55,3 +56,12 @@ def compare_value(o_value, default_value, logic_word='and'):
         result = o_value if not o_value else default_value
 
     return result
+
+
+def convert_datetime_to_time(o_datetime):
+    ''' convert a datetime object to timestamp '''
+    if not isinstance(o_datetime, datetime): 
+        raise TypeError, 'The type is not correctly'
+    else:
+        pass
+    return int(time.mktime(o_datetime.timetuple()))

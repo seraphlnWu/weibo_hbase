@@ -6,6 +6,10 @@
 import pymongo
 import happybase
 
+from datetime import datetime
+
+from utils import convert_datetime_to_time
+
 from parser.parser import ModelParser
 
 MONGO_INSTANCE = pymongo.Connection('localhost')['sandbox_mongo_5']
@@ -52,39 +56,6 @@ class HbaseInit(object):
 
     def init_user(self):
         '''
-            init the user table from mongodb
-            and the mongodb user schema looked like below:
-
-            row_key = weibo uid 
-            column:family_api = { 
-                rt, 
-                exp,
-                tok,
-            }    
-            column:family_user_attrs = { 
-                screen_name,
-                city,
-                created_at,
-                description,
-                join_at,
-                location,
-                url,
-                gender,
-                province,
-                profile_image_url,
-                invalid,
-                verified,
-                sm_deleted,
-            }    
-            
-            column:family_user_tasks_attrs = {
-                column1 = task_list
-                column2 = fuids
-                column3 = comment_since_id
-                column4 = flwr_update_time
-                column5 = mension_since_id
-                column6 = inf_update_time
-            }
         '''
         if self.connection.is_table_enabled('users'):
             self.connection.disable_table('users')
@@ -106,22 +77,6 @@ class HbaseInit(object):
         '''
             init the follow_relations func
             the data structure looks like below:
-
-            row-key : uid_followerid
-            column:family_follow_attributes: {
-                created_at,
-                sm_deleted,
-                followers_count,
-                friends_count,
-                statuses_count,
-                follower_id,
-                sm_flwr_quality,
-                activeness,
-            }
-            column:family: {
-                comment_count,
-                repost_count,
-            }
         '''
         flag = False
         try:
@@ -166,6 +121,25 @@ class HbaseInit(object):
             }
         )
 
+    def init_comments(self):
+        ''' init the comments table '''
+        flag = False
+        try:
+            flag = self.connection.is_table_enabled('comments')
+        except:
+            flag = False
+
+        if flag:
+            self.connection.disable_table('comments')
+            self.connection.delete_table('comments')
+
+
+        self.connection.create_table(
+            'comments',
+            {
+                'comment_attrs': dict(),
+            }
+        )
 
 class InitTestData(object):
     '''
@@ -214,7 +188,6 @@ class InitTestData(object):
         model_parser = ModelParser()
         table = self.connection.table('follow_relations')
         follow_relations = MONGO_INSTANCE.follow_relations.find()
-        from datetime import datetime
         a = datetime.now()
         for cur_relation in follow_relations:
             print cur_relation.get('user_id'), model_parser.de_parse('follow_relation', 'follow_relation', cur_relation)
@@ -240,7 +213,6 @@ class InitTestData(object):
         model_parser = ModelParser()
         table = self.connection.table('followers')
         followers = MONGO_INSTANCE.followers.find()
-        from datetime import datetime
         a = datetime.now()
         for cur_follower in followers:
             print cur_follower.get('_id'), model_parser.de_parse('followers', 'followers', cur_follower)
@@ -253,4 +225,33 @@ class InitTestData(object):
                 )
             )
         print followers.count()
+        print datetime.now() - a
+
+    def insert_test_comments(self):
+        ''' insert test comments '''
+        model_parser = ModelParser()
+        table = self.connection.table('comments')
+        comments = MONGO_INSTANCE.comments.find()
+
+        a = datetime.now()
+
+        for cur_comments in comments:
+            print cur_comments.get('_id'), model_parser.de_parse('comments', 'comments', cur_comments)
+            table.put(
+                '_'.join(map(
+                    str,
+                    (
+                        cur_comments.get('sm_user_id'),
+                        cur_comments.get('status_id'), 
+                        cur_comments.get('_id'),
+                    )
+                )),
+                model_parser.de_parse(
+                    'comments',
+                    'comments',
+                    cur_comments,
+                )
+            )
+
+        print comments.count()
         print datetime.now() - a

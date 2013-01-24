@@ -158,3 +158,37 @@ def del_task(uid, task_timestamp, flag='tid'):
     user_dao.put_one(**{'id': uid, 'tasks': task_list, })
 
     return True
+
+
+def get_buzz_keywords(uid):
+    ''' get target uid's buzz keywords '''
+    user_dao = UserDao()
+    return user_dao.query_one(*['buzz_keywords'], **{'id': uid})
+
+
+def set_buzz_keywords(uid, keywords=[]):
+    """ set buzz_keywords """
+    flag = False
+    usr = get_user_by_id(uid)
+    if not all((usr, isinstance(keywords, list))):
+        pass
+    else:
+        user_dao = UserDao()
+        user_dao.put_one(**{'id': uid, 'buzz_keywords': keywords}) 
+        flag = True    
+
+    return flag
+
+
+def del_buzz_keyword(uid, keywords=[]):
+    """ delete buzz_keywords """
+    flag = False
+    usr = get_user_by_id(uid)
+    if not all((usr, isinstance(keywords, list))):
+        pass
+    else:
+        user_dao = UserDao()
+        user_dao.put_one(**{'id': uid, 'buzz_keywords': keywords}) 
+        flag = True    
+
+    return flag

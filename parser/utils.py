@@ -11,7 +11,7 @@ from config import USER_API_COLUMN_FAMILY_SET
 from config import FOLLOW_RELATION_FOLLOW_ATTRS_SET
 from config import FOLLOW_RELATION_FOLLOW_TASK_SET
 
-from weibo_dao import sm_log
+import sm_log
 
 logger = sm_log.get_logger('weibo_hbase_utils')
 
@@ -38,6 +38,8 @@ def parse_datetime_into_hbase(o_datetime):
     '''
         parse the datetime to hbase support type
     '''
+    if isinstance(o_datetime, str):
+        o_datetime = format_date()
     return str(o_datetime)
 
 def parse_boolean_into_hbase(o_value):
@@ -128,6 +130,11 @@ def get_followers_column_prefix(key):
     return 'follower_attrs'
 
 
+def get_comments_column_prefix(key):
+    ''' get comments column name '''
+    return 'comment_attrs'
+
+
 def make_column_name(prefix, attr):
     '''
         return a column name
@@ -136,6 +143,7 @@ def make_column_name(prefix, attr):
         'users': get_user_column_prefix,
         'follow_relation': get_follow_relation_column_prefix,
         'followers': get_followers_column_prefix,
+        'comments': get_comments_column_prefix,
     }
 
     return ':'.join([proc_dict[prefix](attr), attr])
@@ -149,4 +157,11 @@ def convert_data(o_value):
         return o_value.encode('utf8')
     else:
         return str(o_value)
-            
+
+
+def format_date(created_at):
+    """ 格式化创建时间 """
+    if isinstance(created_at, unicode):
+        return datetime.strptime(created_at, '%a %b %d %H:%M:%S +%f %Y')
+    else:
+        return created_at
