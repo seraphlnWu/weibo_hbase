@@ -8,6 +8,7 @@ import pymongo
 import happybase
 
 from datetime import datetime
+from datetime import timedelta
 import time
 
 from config import MONGODB_HOST
@@ -65,3 +66,24 @@ def convert_datetime_to_time(o_datetime):
     else:
         pass
     return int(time.mktime(o_datetime.timetuple()))
+
+
+def get_week_start(f_date=None):
+    """ 得到这一周的开始时间 """
+    if not f_date:
+        f_date = today_datetime()
+
+    return f_date - timedelta(f_date.weekday())
+
+
+def get_month_start(f_date=None):
+    """ 得到这个月的开始时间 """
+    if not f_date:
+        f_date = today_datetime()
+
+    return f_date - timedelta(f_date.day - 1)
+
+
+def get_all_start():
+    """ 所有起始时间 """
+    return datetime(2000, 1, 1)
