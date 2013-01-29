@@ -1,8 +1,13 @@
 # coding=utf8
 
 from utils import MONGODB_INSTANCE
+from utils import get_week_start
+from utils import get_month_start
+from utils import get_all_start
 
 from influence_dao import get_cur_influence
+
+from random import shuffle
 
 from datetime import datetime
 
@@ -89,7 +94,7 @@ def get_hotwords_graph(
     flag='only',
 ):
     ''' 获取一个账号的评论高频词列表 '''
-    hotwords = db[search_from].find_one({
+    hotwords = MONGODB_INSTANCE[search_from].find_one({
         'sm_user_id': uid,
         'f_date': get_all_start(),
         'type': 'all',
@@ -140,7 +145,7 @@ def get_hotwords_search(
         'all': get_all_start,
     }
 
-    hotwords = db[search_from].find_one({
+    hotwords = MONGODB_INSTANCE[search_from].find_one({
         'sm_user_id': uid,
         'f_date': search_dict[h_type](),
         'type': h_type

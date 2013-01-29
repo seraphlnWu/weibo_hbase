@@ -11,7 +11,7 @@ from config import USER_API_COLUMN_FAMILY_SET
 from config import FOLLOW_RELATION_FOLLOW_ATTRS_SET
 from config import FOLLOW_RELATION_FOLLOW_TASK_SET
 
-from weibo_dao import sm_log
+from social_master.weibo_dao import sm_log
 
 logger = sm_log.get_logger('weibo_hbase_utils')
 

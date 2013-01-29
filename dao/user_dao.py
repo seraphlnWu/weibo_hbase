@@ -79,7 +79,11 @@ def get_user_info(uid, default=['id', 'screen_name']):
 def get_tasks(uid):
     ''' get a task list by uid '''
     user_dao = UserDao()
-    return user_dao.query_one(*['tasks'], **{'id': uid}) or []
+    tmp_user = user_dao.query_one(*['tasks'], **{'id': uid})
+    if tmp_user:
+        return tmp_user.get('tasks', [])
+
+    return []
 
 
 def get_user(uid):
@@ -156,35 +160,40 @@ def del_task(uid, task_timestamp, flag='tid'):
     return True
 
 
-def get_buzz_keywords(uid):
-    ''' get target uid's buzz keywords '''
+def get_keywords(uid, k_type='buzz_keywords'):
+    """ get keywords , default buzz_keywords """
     user_dao = UserDao()
-    return user_dao.query_one(*['buzz_keywords'], **{'id': uid})
+    usr = user_dao.query_one(*[k_type], **{'id': uid})
+    if usr:
+        return usr.get(k_type, [])
+    else:
+        return []
 
 
-def set_buzz_keywords(uid, keywords=[]):
-    """ set buzz_keywords """
+def set_keywords(uid, keywords=[], k_type='buzz_keywords'):
+    """ set keywords ,  default buzz_keywords """
     flag = False
-    usr = get_user_by_id(uid)
+    user_dao = UserDao()
+    usr = user_dao.query_one(*[k_type], **{'id': uid})
     if not all((usr, isinstance(keywords, list))):
         pass
     else:
-        user_dao = UserDao()
-        user_dao.put_one(**{'id': uid, 'buzz_keywords': keywords}) 
-        flag = True    
+        user_dao.put_one(**{'id': uid, k_type: keywords})
+        flag = True
 
     return flag
 
 
-def del_buzz_keyword(uid, keywords=[]):
-    """ delete buzz_keywords """
+def del_keyword(uid, keywords=[], k_type='buzz_keywords'):
+    """ delete keywords , default buzz_keywords """
     flag = False
-    usr = get_user_by_id(uid)
+    user_dao = UserDao()
+    usr = user_dao.query_one(*[k_type], **{'id': uid})
+
     if not all((usr, isinstance(keywords, list))):
         pass
     else:
-        user_dao = UserDao()
-        user_dao.put_one(**{'id': uid, 'buzz_keywords': keywords}) 
-        flag = True    
+        user_dao.put_one(**{'id': uid, k_type: keywords})
+        flag = True
 
     return flag
