@@ -75,9 +75,11 @@ def get_followers_location_distr(uid, reftime=None):
     '获取粉丝地理分布'
     return get_cur_influence(uid).get('followers_location_dist', {})
 
+
 def get_followers_activeness_distr(uid, reftime=None):
     '获取粉丝活跃度分布'
     return get_cur_influence(uid).get('followers_activeness_dist', {})
+
 
 def get_fans_activeness_distr_data(uid, step_length=10):
     d = get_followers_activeness_distr(uid).items()
@@ -223,7 +225,8 @@ def get_histories_by_page(
     sort_type='date',
     page=1,
     records_per_page=10,
-    sort_reverse=True):
+    sort_reverse=True,
+):
 
     histories = MONGODB_INSTANCE.influence.find(
         {'id': uid},
@@ -261,4 +264,16 @@ def get_histories_by_page(
         page_info['next_page'] = page_info['page_totals']
 
     return page_info, his_list[(page-1)*records_per_page: page*records_per_page]
-    
+
+
+def get_influence_by_date(
+    uid,
+    sort_type='date',
+    sort_reverse=True,
+    limit=0,
+):
+    ''' get influence by limit '''
+    if limit:
+        return MONGODB_INSTANCE.influence.find({'id': uid}).sort(sort_type, sort_reverse).limit(limit)
+    else:
+        return MONGODB_INSTANCE.influence.find({'id': uid}).sort(sort_type, sort_reverse)

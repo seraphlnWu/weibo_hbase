@@ -197,3 +197,20 @@ def del_keyword(uid, keywords=[], k_type='buzz_keywords'):
         flag = True
 
     return flag
+
+
+def get_user_ins():
+    ''' get users with ins keyword '''
+    users = get_users()
+    return [x for x in users if 'ins' in x]
+
+
+def get_fuids(uid, with_followbrand_count=False):
+    ''' get followbrand list '''
+    result = []
+    info = get_user_by_keyword(uid, *{'fuids': 1, 'max_followbrand_count': 1})
+    result.append(info.get('fuids', []))
+    if with_followbrand_count:
+        result.append(info.get('max_followbrand_count', None))
+
+    return result
