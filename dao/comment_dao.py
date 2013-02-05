@@ -5,7 +5,7 @@ from utils import today_datetime
 from datetime import timedelta
 
 from user_dao import get_keywords
-
+from smdata.utils import paginate
 
 def get_comments_by_page(
     uid, 

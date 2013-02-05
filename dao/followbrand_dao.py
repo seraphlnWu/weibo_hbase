@@ -1,11 +1,15 @@
 # coding=utf8
-from utils import MONGODB_INSTANCE
 
-from user_dao import get_fuids
+import datetime
+from weibo_dao.dao.base import BaseQuery
+from weibo_dao.dao.utils import MONGODB_INSTANCE
+from weibo_dao.dao.user_dao import get_fuids, get_user
+from weibo_dao.dao.influence_dao import get_influence_by_date
 
-from influence_dao import get_influence_by_date
 
-
+class FollowbrandDao(BaseQuery):
+    tb_name = 'followbrands'
+    
 def get_followbrands(uid, uidlist, sort_type='influence', sort_reverse=-1):
     '''
     input:

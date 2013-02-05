@@ -1,14 +1,8 @@
 # coding=utf8
 
-from datetime import datetime
-
 from base import BaseQuery
-from base import ResultList
 
-from utils import MONGODB_INSTANCE
 from utils import HBASE_INSTANCE
-
-from utils import compare_value
 
 from influence_dao import get_cur_influence
 
@@ -27,7 +21,7 @@ class UserDao(BaseQuery):
 
     def query(self, *args, **kwargs):
         ''' query users '''
-        return [self.m_parser('user', self.table.scan())]
+        return [self.m_parser('users', self.table.scan())]
 
     def query_one(self, *args, **kwargs):
         ''' query one user '''
@@ -38,7 +32,7 @@ class UserDao(BaseQuery):
             pass
 
         return self.m_parser.parse(
-            'user',
+            'users',
             self.table.row(str(kwargs.get('id')), columns=column_list),
         )
 
@@ -58,10 +52,10 @@ def get_users():
     return user_dao.query()
 
 
-def get_user_by_id(uid):
+def get_user_by_id(uid, columns=[]):
     ''' 根据传入的uid获取相应的user信息 '''
     user_dao = UserDao()
-    return user_dao.query_one(**{'id': uid})
+    return user_dao.query_one(*columns, **{'id': uid})
 
 
 def get_user_by_keyword(uid, *keywords):

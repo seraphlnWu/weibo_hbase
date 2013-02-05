@@ -113,9 +113,9 @@ def get_follow_relation_column_prefix(key):
         get the follow_relation column name
     '''
     name = None
-    if key in FOLLOWBRAND_FOLLOW_ATTRS_SET:
+    if key in FOLLOW_RELATION_FOLLOW_ATTRS_SET:
         name = 'follow_attrs'
-    elif key in FOLLOWBRAND_FOLLOW_TASK_SET:
+    elif key in FOLLOW_RELATION_FOLLOW_TASK_SET:
         name = 'task_attrs'
     else:
         raise NotImplementedError
@@ -141,7 +141,7 @@ def make_column_name(prefix, attr):
     '''
     proc_dict = {
         'users': get_user_column_prefix,
-        'follow_relation': get_follow_relation_column_prefix,
+        'follow_relations': get_follow_relation_column_prefix,
         'followers': get_followers_column_prefix,
         'comments': get_comments_column_prefix,
     }

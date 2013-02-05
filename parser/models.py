@@ -400,7 +400,7 @@ class ModelFactory(object):
         models. subclass this factary to add special
         models is also valid.
     '''
-    user = User
-    follow_relation = FollowRelations
+    users = User
+    follow_relations = FollowRelations
     followers = Followers
     comments = Comments

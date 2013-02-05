@@ -1,5 +1,6 @@
 # coding=utf8
 from weibo_dao.dao.utils import HBASE_INSTANCE
+from weibo_dao.parser.utils import make_column_name
 from weibo_dao.parser.parser import ModelParser
 
 '''
@@ -47,7 +48,7 @@ class BaseQuery(object):
             kwargs['columns'] = [make_column_name(self.tb_name, attr) for attr in kwargs['columns']]
 
         return self.m_parser.parse(
-            self.tb_name
+            self.tb_name,
             self.table.row(id, **kwargs)
         )
 

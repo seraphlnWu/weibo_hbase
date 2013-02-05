@@ -15,17 +15,17 @@ FOLLOW_RELATION_TB = HBASE_INSTANCE.table('follow_relations')
 class FollowerDao(BaseQuery):
     ''' inherit from base query '''
     #TODO, subclassing
-    pass
+    tb_name = 'followers'
 
 class FollowRelationDao(BaseQuery):
     #TODO, subclassing
-    pass
+    tb_name = 'follow_relations'
 
 
 def get_follower_attr(uid, follower_id, attrs):
     """返回针对当前用户的评论数"""
     dao = FollowRelationDao()
-    return dao.query_one(*attrs, id='%s_%s' % (uid, follower_id))
+    return dao.query_one('%s_%s'%(uid, follower_id), columns=attrs)
 
 def get_cache_flwr_by_page(
     uid,
@@ -183,3 +183,4 @@ def get_follower_all(uid, keyword):
         MONGODB_INSTANCE.follow_relations.find({'user_id': uid}).sort(keyword, -1).limit(50)
     )
     return inf
+
