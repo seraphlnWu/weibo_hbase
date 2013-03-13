@@ -1,0 +1,63 @@
+digraph G{
+rankdir=LR;
+
+update_flw[label="daily_update_followers\nvalidation needed"];
+sina -> update_flw[label="new followers",style=dotted];
+update_flw -> hbase[label="valid,save to follower"];
+update_flw -> cache[label="save invalid data to cache,refetch later", dir=both];
+
+update_info[label="daily_update_user_info\nvalidation needed"];
+sina -> update_info[label="user info",style=dotted];
+update_info -> cache[label="user,influence"];
+
+update_comment[label="update_comments\nvalidation needed"];
+sina -> update_comment[label="new comments,reposts,mentions,mention users",style=dotted];
+update_comment -> cache[label="weibomaster real time display"];
+update_comment -> hbase;
+
+
+
+update_brand_flwr[label="daily_update_followbrand_follower\nvalidation needed"];
+sina -> update_brand_flwr[style=dotted,label="new followbrand followers"];
+update_brand_flwr -> hbase;
+
+brand_info[label="daily_update_followbrand_info\nvalidation needed"];
+sina -> brand_info[label="followbrand info",style=dotted];
+brand_info -> cache[label="followbrand,followbrand influence"]
+
+
+
+
+
+inf[label="mapreduce\ndaily_update_influence"];
+hbase -> inf[label="follower",style=dotted];
+inf -> cache[label="influence,activeness,quality"];
+
+stat[label="mapreduce\ndaily_update_user_statistic"];
+hbase -> stat[label="follower",style=dotted];
+stat -> cache[label="distr info"];
+
+eyeflash[label="mapreduce\ndaily_update_eyeflash"];
+hbase -> eyeflash[label="status",style=dotted];
+eyeflash -> cache[label="eyeball, flash"];
+
+brand_stat[label="mapreduce\ndaily_update_followbrand_statistic"];
+hbase -> brand_stat[style=dotted,label="follower"];
+brand_stat -> cache[label="followbrand distr info"];
+
+brand_inf[label="mapreduce\ndaily_update_followbrand_influence"];
+hbase -> brand_inf[style=dotted,label="followbrand follower"];
+brand_inf -> cache[label="followbrand influence"];
+
+update_hotwords[label="daily_update_hotwords\nsegment new comments and mentions,calculate"];
+hbase -> update_hotwords[sytle=dotted,label="new comments and mentions",style=dotted]
+update_hotwords -> cache;
+
+
+{
+node[shape=plaintext];
+虚线代表读取，实线代表写入;
+}
+}
+
+
