@@ -1,0 +1,20 @@
+digraph G{
+rankdir=LR;
+cache[label="Cache\nMongodb or redis\nstatus,comment,mention\nuser,top100 user,celebrity,followbrand\nstatistics, hotwords"];
+hbase[label="Hbase\nstatus,comment,repost,mention\nfollower"];
+MapReduce -> hbase[style=dotted];
+MapReduce -> cache[label="statistics, hotwords, top100 user"];
+weibomaster -> cache[style=dotted];
+weibomaster -> hbase[style=dotted];
+api[label="API"];
+api -> hbase[style=dotted];
+api -> hbase;
+task[label="data collection tasks\nCelery"];
+task -> hbase[label="status,comment,repost,mention,follower"];
+task -> cache[label="daily status,comment,mention,celebrity,followbrand"];
+datacenter -> hbase[label="hive?",style=dotted];
+{
+node[shape=plaintext];
+虚线代表读取，实线代表写入;
+}
+}

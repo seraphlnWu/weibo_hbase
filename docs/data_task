@@ -1,0 +1,38 @@
+digraph G{
+rankdir=LR;
+
+update_flw[label="daily_update_followers\nvalidation needed"];
+update_flw -> sina[label="new followers",style=dotted];
+update_flw -> hbase[label="valid,save to follower"];
+update_flw -> cache[label="save invalid data to cache,refetch later", dir=both];
+
+update_info[label="daily_update_user_info\nvalidation needed"];
+update_info -> sina[label="user info",style=dotted];
+update_info -> cache[label="user,influence"];
+
+update_comment[label="update_comments\nvalidation needed"];
+update_comment -> sina[label="new comments,reposts,mentions,mention users",style=dotted];
+update_comment -> cache[label="weibomaster real time display"];
+update_comment -> hbase;
+
+
+
+update_brand_flwr[label="daily_update_followbrand_follower\nvalidation needed"];
+update_brand_flwr -> sina[style=dotted,label="new followbrand followers"];
+update_brand_flwr -> hbase;
+
+brand_info[label="daily_update_followbrand_info\nvalidation needed"];
+brand_info -> sina[label="followbrand info",style=dotted];
+brand_info -> cache[label="followbrand,followbrand influence"]
+
+
+
+
+
+{
+node[shape=plaintext];
+虚线代表读取，实线代表写入;
+}
+}
+
+

@@ -1,0 +1,24 @@
+digraph G{
+rankdir=LR;
+inf[label="mapreduce\ndaily_update_influence"];
+inf -> hbase[label="follower",style=dotted];
+inf -> cache[label="influence,activeness,quality"];
+stat[label="mapreduce\ndaily_update_user_statistic"];
+stat -> hbase[label="follower",style=dotted];
+stat -> cache[label="distr info"];
+eyeflash[label="mapreduce\ndaily_update_eyeflash"];
+eyeflash -> hbase[label="status",style=dotted];
+eyeflash -> cache[label="eyeball, flash"];
+
+brand_stat[label="mapreduce\ndaily_update_followbrand_statistic"];
+brand_stat -> hbase[style=dotted,label="follower"];
+brand_stat -> cache[label="followbrand distr info"];
+
+brand_inf[label="mapreduce\ndaily_update_followbrand_influence"];
+brand_inf -> hbase[style=dotted,label="followbrand follower"];
+brand_inf -> cache[label="followbrand influence"];
+update_hotwords[label="daily_update_hotwords\nsegment new comments and mentions,calculate"];
+update_hotwords -> hbase[sytle=dotted,label="new comments and mentions",style=dotted]
+update_hotwords -> cache;
+
+}
