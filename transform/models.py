@@ -3,6 +3,8 @@
     transform models.
 '''
 
+from datetime import datetime
+
 import pymongo
 import happybase
 
@@ -30,8 +32,20 @@ class HbaseInit(object):
         self.connection = happybase.Connection(
             hbase_host,
             autoconnect=autoconnect,
+            compat='0.90',
         )
         self.connection.open()
+
+
+    def test_select_with_prefix(self):
+        table = self.connection.table('follower_test')
+        a = datetime.now()
+        total_data = table.scan(row_prefix='2606645702_', batch_size=100000)
+        #total_data = table.scan(batch_size=100000)
+        #total_data = table.scan()
+        print len(list(total_data))
+        print datetime.now() - a
+        
         
 
     def init_module_structure(self):
@@ -147,6 +161,7 @@ class HbaseInit(object):
         '''
             init the followers table. 
         '''
+        '''
         flag = False
         try:
             flag = self.connection.is_table_enabled('followers')
@@ -158,7 +173,7 @@ class HbaseInit(object):
             self.connection.delete_table('followers')
         else:
             pass
-        
+        ''' 
         self.connection.create_table(
             'followers',
             {
@@ -223,6 +238,7 @@ class InitTestData(object):
         model_parser = ModelParser()
         table = self.connection.table('users')
         users = MONGO_INSTANCE.users.find()
+        a = datetime.now()
         for user in users:
             table.put(
                 str(user.get('_id')),
@@ -230,6 +246,7 @@ class InitTestData(object):
             )
             if user.get('id') == 1969092405:
                 print 'blablabla'
+        print datetime.now() - a
 
 
     def insert_test_follow_relations(self):
@@ -239,7 +256,6 @@ class InitTestData(object):
         model_parser = ModelParser()
         table = self.connection.table('follow_relations')
         follow_relations = MONGO_INSTANCE.follow_relations.find()
-        from datetime import datetime
         a = datetime.now()
         for cur_relation in follow_relations:
             print cur_relation.get('user_id'), model_parser.de_parse('follow_relation', 'follow_relation', cur_relation)
@@ -264,22 +280,29 @@ class InitTestData(object):
         '''
         BATCH_SIZE = 10000
         model_parser = ModelParser()
-        table = self.connection.table('followers')
-        followers = MONGO_INSTANCE.followers.find()
+        table = self.connection.table('follower_test')
+        follow_relations = MONGO_INSTANCE.follow_relations.find().skip(1143179).limit(5000000)
+        #followers = MONGO_INSTANCE.followers.find()
         #b = table.batch(batch_size=BATCH_SIZE)
-        from datetime import datetime
         a = datetime.now()
-        for cur_follower in followers:
+        for cur_follow_relation in follow_relations:
             #print cur_follower.get('_id'), model_parser.de_parse('followers', 'followers', cur_follower)
-            table.put(
-                str(cur_follower.get('_id')),
-                model_parser.de_parse(
-                    'followers',
-                    'followers',
-                    cur_follower,
-                )
+            uid = cur_follow_relation.get('user_id')
+            follower_id = cur_follow_relation.get('follower_id')
+            cur_follower = MONGO_INSTANCE.followers.find_one({'_id': follower_id})
+            if not cur_follower:
+                print uid, follower_id, 'does not exists'
+                continue
+            cur_follower.update({'uid': uid, 'follower_id': follower_id})
+            tmp_model = model_parser.de_parse(
+                'followers',
+                'followers',
+                cur_follower,
             )
-        print followers.count()
+            table.put(
+                '_'.join(map(str, [uid, follower_id])),
+                tmp_model,
+            )
         print datetime.now() - a
 
 
