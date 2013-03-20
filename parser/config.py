@@ -51,7 +51,6 @@ FOLLOWERS_COLUMN_DICT = {
     'sm_uids': {'column_name': 'fa:fu', 'type': 'list'},
 }
 
-
 COMMENTS_COLUMN_DICT = {
     'sm_user_id': {'column_name': 'cm:su', 'type': 'int'},
     'user_id': {'column_name': 'cm:ui', 'type': 'int'},
@@ -97,7 +96,6 @@ REPOSTS_COLUMN_DICT = {
     'sm_flash_factor': {'column_name': 'rp:fla', 'type': 'float'},
     'sm_eyeball_factor': {'column_name': 'rp:eb', 'type': 'float'},
 }
-
 
 MENTIONS_COLUMN_DICT = {
     'user_id': {'column_name': 'mt:ui', 'type': 'int'},

@@ -4,6 +4,8 @@
 '''
 import time
 
+from datetime import datetime
+
 import pymongo
 import happybase
 
@@ -52,6 +54,14 @@ class HBaseClient(object):
         )
         self.connection.open()
 
+    def init_module_structure(self):
+        '''
+            初始化表以及表结构 
+        '''
+        self.init_user()
+        self.init_follow_relations()
+        self.init_followers()
+
 
     def close(self):
         ''' close the connection '''
@@ -94,6 +104,29 @@ class HBaseClient(object):
         ''' 初始化表以及表结构 '''
         for table_name, cf in TABLE_CF_MAPPER.iteritems():
             self.init_table(table_name, cf)
+    def init_test_table(self):
+        '''
+            init the test table. 
+        '''
+        flag = False
+        try:
+            flag = self.connection.is_table_enabled('test_put')
+        except:
+            pass
+
+        if flag:
+            self.connection.disable_table('test_put')
+            self.connection.delete_table('test_put')
+        else:
+            pass
+        
+        self.connection.create_table(
+            'test_put',
+            {
+                'some_attr': dict(),
+            }
+        )
+        print 'done!'
 
 
 class InitTestData(object):
@@ -128,12 +161,15 @@ class InitTestData(object):
         model_parser = ModelParser()
         table = self.connection.table('users')
         users = MONGO_INSTANCE.users.find()
+        a = datetime.now()
         for user in users:
-            print user.get('_id'), model_parser.de_parse('users', 'user', user)
             table.put(
                 str(user.get('_id')),
-                model_parser.de_parse('attrs', 'user', user),
+                model_parser.de_parse('users', 'user', user),
             )
+            if user.get('id') == 1969092405:
+                print 'blablabla'
+        print datetime.now() - a
 
 
     def insert_test_follow_relations(self):
@@ -143,7 +179,6 @@ class InitTestData(object):
         model_parser = ModelParser()
         table = self.connection.table('follow_relations')
         follow_relations = MONGO_INSTANCE.follow_relations.find()
-        from datetime import datetime
         a = datetime.now()
         for cur_relation in follow_relations:
             print cur_relation.get('user_id'), model_parser.de_parse('follow_relation', 'follow_relation', cur_relation)
@@ -166,20 +201,49 @@ class InitTestData(object):
         '''
             init a test followers 
         '''
+        BATCH_SIZE = 10000
         model_parser = ModelParser()
-        table = self.connection.table('followers')
+        table = self.connection.table('follower_test')
+        follow_relations = MONGO_INSTANCE.follow_relations.find().skip(1143179).limit(5000000)
+        #followers = MONGO_INSTANCE.followers.find()
+        #b = table.batch(batch_size=BATCH_SIZE)
+        a = datetime.now()
+        for cur_follow_relation in follow_relations:
+            #print cur_follower.get('_id'), model_parser.de_parse('followers', 'followers', cur_follower)
+            uid = cur_follow_relation.get('user_id')
+            follower_id = cur_follow_relation.get('follower_id')
+            cur_follower = MONGO_INSTANCE.followers.find_one({'_id': follower_id})
+            if not cur_follower:
+                print uid, follower_id, 'does not exists'
+                continue
+            cur_follower.update({'uid': uid, 'follower_id': follower_id})
+            tmp_model = model_parser.de_parse(
+                'followers',
+                'followers',
+                cur_follower,
+            )
+            table.put(
+                '_'.join(map(str, [uid, follower_id])),
+                tmp_model,
+            )
+        print datetime.now() - a
+
+
+    def insert_test_attrs(self):
+        '''
+            init a test followers 
+        '''
+        BATCH_SIZE = 10000
+        table = self.connection.table('test_put')
         followers = MONGO_INSTANCE.followers.find()
+        followers_ids = [x.get('_id') for x in followers]
+        #b = table.batch(batch_size=BATCH_SIZE)
         from datetime import datetime
         a = datetime.now()
-        for cur_follower in followers:
-            print cur_follower.get('_id'), model_parser.de_parse('followers', 'followers', cur_follower)
+        for cur_id in followers_ids:
             table.put(
-                str(cur_follower.get('_id')),
-                model_parser.de_parse(
-                    'followers',
-                    'followers',
-                    cur_follower,
-                )
+                str(cur_id),
+                {'some_attr:attr': "blablabla"},
             )
         print followers.count()
         print datetime.now() - a

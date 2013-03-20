@@ -66,7 +66,6 @@ class Model(object):
         ''' deserialized a list of JSON type objects to HBase type '''
         return ResultSet([self.deserialized(obj) for obj in json_list])
 
-
 class Followers(Model):
     ''' followers class. '''
     columns_dct, reverse_column_dct = reverse_the_column_to_key(
