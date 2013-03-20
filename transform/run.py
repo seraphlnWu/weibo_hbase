@@ -3,7 +3,7 @@
 '''
     run the tranform.
 '''
-import sys, os
+import sys
 from os.path import realpath, dirname
 from os.path import join as path_join
 sys.path.insert(0, realpath(path_join(dirname(__file__), '../')))
@@ -37,15 +37,16 @@ connection = happybase.Connection(
 connection.open()
 
 def get_hbase_connection():
+    ''' get a hbase conn instance '''
     return HBaseClient(HBASE_HOST)
 
 
 HBASE_CLIENT = HBaseClient(HBASE_HOST)
-MONGO_INSTANCE = pymongo.Connection('localhost')['sandbox_mongo_5']
+MONGO_INSTANCE = pymongo.Connection(MONGODB_HOST, MONGODB_PORT)[MONGODB_NAME]
 
 
 def init_tables():
-    ''' '''
+    ''' init whole hbase tables. '''
     HBASE_CLIENT.init_all_tables()
 
 
@@ -66,10 +67,10 @@ def insert_data(table_name, row_format):
 
 
 def insert_all_data():
+    ''' insert whole data '''
     for cur_table, row_format in TABLE_DCT.iteritems():
         insert_data(cur_table, row_format)
 
 if __name__ == '__main__':
     init_tables()
-    #insert_test_data('followers')
     insert_all_data()

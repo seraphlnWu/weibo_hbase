@@ -6,7 +6,6 @@ import time
 
 from datetime import datetime
 
-import pymongo
 import happybase
 
 from parser.parser import ModelParser
