@@ -17,4 +17,4 @@ MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
 MONGODB_NAME = 'sandbox_mongo_5'
 
-HBASE_HOST = 'localhost'
+HBASE_HOST = '192.168.122.101'

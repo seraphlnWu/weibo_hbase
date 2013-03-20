@@ -89,7 +89,7 @@ def parse_float_into_hbase(o_value):
 
 def parse_list_into_hbase(o_value):
     ''' parse the list to strings with comma '''
-    return ','.join(map(str, o_value))
+    return ','.join(map(convert_data, o_value))
 
 
 DEPARSE_MAPPER = {

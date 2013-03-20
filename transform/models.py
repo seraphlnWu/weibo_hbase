@@ -54,15 +54,6 @@ class HBaseClient(object):
         )
         self.connection.open()
 
-    def init_module_structure(self):
-        '''
-            初始化表以及表结构 
-        '''
-        self.init_user()
-        self.init_follow_relations()
-        self.init_followers()
-
-
     def close(self):
         ''' close the connection '''
         self.connection.close()
@@ -82,51 +73,34 @@ class HBaseClient(object):
         except:
             pass
 
+        '''
         if flag:
             print 'Current table is exists.'
         else:
-            # here for testing, so, if the table is exists
-            # I will drop it and recreate a new one.
-            self.connection.disable_table('follow_relations')
-            self.connection.delete_table('follow_relations')
+        '''
+        # here for testing, so, if the table is exists
+        # I will drop it and recreate a new one.
+        print table_name
+        try:
+            self.connection.disable_table(table_name)
+            self.connection.delete_table(table_name)
+        except:
+            pass
 
-            print '%s will be created in ...'
-            for i in range(3, 0, -1):
-                print '%d...' % i
-                time.sleep(1)
+        print '%s will be created in ...' % table_name
+        for i in range(3, 0, -1):
+            print '%d...' % i
+            time.sleep(1)
 
-            self.connection.create_table(
-                table_name,
-                dict([(x, dict()) for x in cf]),  # for python 2.6-
-            )
+        self.connection.create_table(
+            table_name,
+            dict([(x, dict()) for x in cf]),  # for python 2.6-
+        )
 
     def init_all_tables(self):
         ''' 初始化表以及表结构 '''
         for table_name, cf in TABLE_CF_MAPPER.iteritems():
             self.init_table(table_name, cf)
-    def init_test_table(self):
-        '''
-            init the test table. 
-        '''
-        flag = False
-        try:
-            flag = self.connection.is_table_enabled('test_put')
-        except:
-            pass
-
-        if flag:
-            self.connection.disable_table('test_put')
-            self.connection.delete_table('test_put')
-        else:
-            pass
-        
-        self.connection.create_table(
-            'test_put',
-            {
-                'some_attr': dict(),
-            }
-        )
-        print 'done!'
 
 
 class InitTestData(object):

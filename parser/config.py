@@ -69,7 +69,7 @@ COMMENTS_COLUMN_DICT = {
     'source': {'column_name': 'cm:src', 'type': 'string'},
     'created_at': {'column_name': 'cm:ca', 'type': 'datetime'},
     'status_id': {'column_name': 'cm:sid', 'type': 'int'},
-    'buzz_keywords': {'column_name': 'cm_bk', 'type': 'list'},
+    'buzz_keywords': {'column_name': 'cm:bk', 'type': 'list'},
     'segment': {'column_name': 'cm:seg', 'type': 'list'},
 }
 

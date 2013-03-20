@@ -121,10 +121,10 @@ class ModelFactory(object):
         models. subclass this factary to add special
         models is also valid.
     '''
-    follow_relation = FollowRelations
+    follow_relations = FollowRelations
     followers = Followers
     comments = Comments
     reposts = Reposts
     mentions = Mentions
-    mention_user = MentionUsers
+    mention_users = MentionUsers
     status = Status
