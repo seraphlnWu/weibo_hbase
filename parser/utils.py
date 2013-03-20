@@ -55,10 +55,11 @@ def parse_datetime_into_hbase(o_datetime):
     ''' parse the datetime to hbase support type '''
 
     result = None
-    if isinstance(o_datetime, str):
-        logger.info(o_datetime)
+    if isinstance(o_datetime, unicode):
+        o_datetime = format_date(o_datetime)
     else:
-        result = o_datetime.strftime('%Y-%m-%d %H:%M:%S')
+        pass
+    result = o_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
     return result
 
@@ -70,35 +71,43 @@ def parse_boolean_into_hbase(o_value):
 
 def parse_int_into_hbase(o_value):
     ''' parse the int to bytes '''
+    if o_value:
+        o_value = int(o_value)
+    else:
+        o_value = 0
     return pack('l', o_value)
 
 
 def parse_float_into_hbase(o_value):
     ''' convert the bytes to float '''
+    if o_value:
+        o_value = float(o_value)
+    else:
+        o_value = 0.0
     return pack('f', o_value)
 
 
 def parse_list_into_hbase(o_value):
     ''' parse the list to strings with comma '''
-    return ','.join(o_value)
+    return ','.join(map(str, o_value))
 
 
-PARSE_MAPPER = {
+DEPARSE_MAPPER = {
     'int': parse_int_into_hbase,
     'boolean': parse_boolean_into_hbase,
     'datetime': parse_datetime_into_hbase,
     'list': parse_list_into_hbase,
     'float': parse_float_into_hbase,
-    'string': str,
+    'string': convert_data,
 }
 
-DEPARSE_MAPPER = {
+PARSE_MAPPER = {
     'int': parse_int_from_hbase,
     'boolean': parse_boolean_from_hbase,
     'datetime': parse_datetime_from_hbase,
     'list': parse_list_from_hbase,
     'float': parse_float_from_hbase,
-    'string': str,
+    'string': convert_data,
 }
 
 
@@ -111,3 +120,11 @@ def reverse_the_column_to_key(o_dict):
             {'column_name': k, 'type': v.get('type')}
         ) for k, v in o_dict.iteritems()]),
     )
+
+
+def format_date(created_at):
+    """ 格式化创建时间 """
+    if isinstance(created_at, unicode):
+        return datetime.strptime(created_at, '%a %b %d %H:%M:%S +%f %Y')
+    else:
+        return created_at

@@ -2,4 +2,3 @@
 '''
     init of the parser
 '''
-from parser import ModelParser

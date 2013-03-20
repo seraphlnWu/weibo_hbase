@@ -50,79 +50,8 @@ class HbaseInit(object):
         pass
 
 
-    def init_user(self):
-        '''
-            init the user table from mongodb
-            and the mongodb user schema looked like below:
-
-            row_key = weibo uid 
-            column:family_api = { 
-                rt, 
-                exp,
-                tok,
-            }    
-            column:family_user_attrs = { 
-                screen_name,
-                city,
-                created_at,
-                description,
-                join_at,
-                location,
-                url,
-                gender,
-                province,
-                profile_image_url,
-                invalid,
-                verified,
-                sm_deleted,
-            }    
-            
-            column:family_user_tasks_attrs = {
-                column1 = task_list
-                column2 = fuids
-                column3 = comment_since_id
-                column4 = flwr_update_time
-                column5 = mension_since_id
-                column6 = inf_update_time
-            }
-        '''
-        if self.connection.is_table_enabled('users'):
-            self.connection.disable_table('users')
-            self.connection.delete_table('users')
-        else:
-            pass
-
-        self.connection.create_table(
-            'users',
-            {
-                'user_api': dict(),
-                'user_attrs': dict(),
-                'user_tasks': dict(),
-            }
-        )
-
 
     def init_follow_relations(self):
-        '''
-            init the follow_relations func
-            the data structure looks like below:
-
-            row-key : uid_followerid
-            column:family_follow_attributes: {
-                created_at,
-                sm_deleted,
-                followers_count,
-                friends_count,
-                statuses_count,
-                follower_id,
-                sm_flwr_quality,
-                activeness,
-            }
-            column:family: {
-                comment_count,
-                repost_count,
-            }
-        '''
         flag = False
         try:
             flag = self.connection.is_table_enabled('follow_relations')
@@ -144,9 +73,6 @@ class HbaseInit(object):
         )
 
     def init_followers(self):
-        '''
-            init the followers table. 
-        '''
         flag = False
         try:
             flag = self.connection.is_table_enabled('followers')

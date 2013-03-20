@@ -12,16 +12,8 @@ class Parser(object):
         ''' parse the response and return the result ''' 
         raise NotImplementedError
            
-    def serialized_error(self, method, payload):
-        ''' parse the error response and return the result ''' 
-        raise NotImplementedError
-
     def deserialized(self, prefix, method, payload):
         ''' deparse the response and return the result ''' 
-        raise NotImplementedError
-
-    def de_parse_error(self, method, payload):
-        ''' deparse the error response and return the result ''' 
         raise NotImplementedError
 
 
@@ -36,14 +28,14 @@ class ModelParser(Parser):
         '''
         self.model_factory = model_factory or ModelFactory
 
-    def parse(self, method, payload):
+    def serialized(self, method, payload):
         '''
             parse the give payload to the type of method 
             
             @method: the given type.
             @payload: data object need to be translate.
         '''
-        try: 
+        try:
             if method is None: return
 
             model = getattr(self.model_factory, method)
@@ -51,17 +43,15 @@ class ModelParser(Parser):
             raise DataError('No model for this payload type: %s' % (method))
 
         if isinstance(payload, list):
-            result = model.parse_list(payload[0], payload)
+            result = model.serialized_list(payload)
         else:
-            result = model.parse(payload, payload)
+            result = model.serialized(payload)
 
         return result
 
 
-    def de_parse(self, prefix, method, payload):
-        '''
-            de parse a structure 
-        '''
+    def deserialized(self, method, payload):
+        ''' de parse a structure '''
         try: 
             if method is None:
                 return
@@ -71,8 +61,8 @@ class ModelParser(Parser):
             raise DataError('No model for this payload type: %s' % (method))
 
         if isinstance(payload, list):
-            result = model.de_parse_list(prefix, payload)
+            result = model.deserialized_list(payload)
         else:
-            result = model.de_parse(prefix, payload)
+            result = model.deserialized(payload)
 
         return result
