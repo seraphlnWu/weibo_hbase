@@ -1,53 +1,50 @@
 # coding=utf8
-'''
-    parse the data structure for mongodb and hbase
-'''
+''' parse the data structure between mongodb type and hbase type '''
+
 from models import ModelFactory
 from error import DataError
-from utils import import_simplejson
 
 
 class Parser(object):
-    '''     
-        parser base class
-    '''     
-    def parse(self, method, payload):
-        ''' 
-            parse the response and return the result
-        ''' 
+    ''' parser base class '''     
+
+    def serialized(self, method, payload):
+        ''' parse the response and return the result ''' 
         raise NotImplementedError
            
-    def parse_error(self, method, payload):
-        ''' 
-            parse the error response and return the result
-        ''' 
+    def serialized_error(self, method, payload):
+        ''' parse the error response and return the result ''' 
         raise NotImplementedError
 
-    def de_parse(self, prefix, method, payload):
-        ''' 
-            deparse the response and return the result
-        ''' 
+    def deserialized(self, prefix, method, payload):
+        ''' deparse the response and return the result ''' 
         raise NotImplementedError
 
     def de_parse_error(self, method, payload):
-        ''' 
-            deparse the error response and return the result
-        ''' 
+        ''' deparse the error response and return the result ''' 
         raise NotImplementedError
-        
 
 
 class ModelParser(Parser):
-    '''
-        parse a model 
-    '''
+    ''' parse models '''
+
     def __init__(self, model_factory=None):
+        ''' 
+            init the model_factory 
+            
+            @model_factory: default will be the ModelFactory
+        '''
         self.model_factory = model_factory or ModelFactory
 
     def parse(self, method, payload):
+        '''
+            parse the give payload to the type of method 
+            
+            @method: the given type.
+            @payload: data object need to be translate.
+        '''
         try: 
-            if method is None:
-                return
+            if method is None: return
 
             model = getattr(self.model_factory, method)
         except AttributeError:

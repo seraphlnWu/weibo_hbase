@@ -1,22 +1,26 @@
 # coding=utf8
 '''
     model factary.
+
+    In this model I defined all the models those
+    needed to be translate from MongoDB type to HBase type or
+    from HBase type to MongoDB.
+
+    The ModelFactory class collect all the models that
+    can be used.
 '''
-from utils import parse_datetime_from_hbase
-from utils import parse_boolean_from_hbase
-from utils import parse_int_from_hbase
-from utils import import_simplejson
-from utils import make_column_name
-from utils import parse_datetime_into_hbase
-from utils import parse_boolean_into_hbase
-from utils import parse_int_into_hbase
-from utils import convert_data
+from utils import PARSE_MAPPER
+from utils import DEPARSE_MAPPER
 
-from config import USER_DATETIME_COLUMN_SET
-from config import USER_BOOLEAN_COLUMN_SET
-from config import USER_INT_COLUMN_SET
-from config import USER_LIST_COLUMN_SET
+from utils import reverse_the_column_to_key
 
+from config import FOLLOW_RELATIONS_COLUMN_DICT
+from config import FOLLOWERS_COLUMN_DICT
+from config import COMMENTS_COLUMN_DICT
+from config import REPOSTS_COLUMN_DICT
+from config import MENTIONS_COLUMN_DICT
+from config import MENTION_USERS_COLUMN_DICT
+from config import STATUS_COLUMN_DICT
 
 
 class ResultSet(list):
@@ -24,293 +28,101 @@ class ResultSet(list):
 
 
 class Model(object):
-    '''
-        base model    
-    '''
-    def __init__(self, api=None):
-        '''
-        '''
-        self._api = api
+    ''' base model '''
+    columns_dct = {}
+    reverse_column_dct = {}
+    
 
-    def __getstate__(self):
-        '''
-        '''
-        pickle = dict(self.__dict__)
-        del pickle['_api']
-        return pickle
+    def __init__(self):
+        ''' init the model '''
 
     @classmethod
-    def parse(cls, api, json):
-        '''
-            parse a HBase object into a model instance
-        '''
-        raise NotImplementedError
-
-    @classmethod
-    def de_parse(cls, prefix, json):
-        '''
-            de parse a mongodb dict into Hbase type strcture
-        '''
-        raise NotImplementedError
-
-    @classmethod
-    def parse_list(cls, api, json_list):
-        '''
-            parse a list of hbase objects into a result set of models instance
-        '''
-        results = ResultSet([cls.parse(api, obj) for obj in json_list])
-        return results
-
-    @classmethod
-    def de_parse_list(cls, prefix, json_list):
-        '''
-            de parse a list of mongodb objects to a set of hbase type
-        '''
-        results = ResultSet([cls.de_parse(api, obj) for obj in json_list])
-        return results
-
-
-class User(Model):
-    '''
-        parse Model structure
-    '''
-    @classmethod
-    def parse(cls, api, json):
-        '''
-            inherit from Model and rewrite the parse func
-        '''
-        user = cls(api)
-        for key, value in json.items():
-            final_key = key.split(':')[1]
-            if key in USER_DATETIME_COLUMN_SET:
-                setattr(user, final_key, parse_datetime_from_hbase(value))
-            elif key in USER_BOOLEAN_COLUMN_SET:
-                setattr(user, final_key, parse_boolean_from_hbase(value))
-            elif key in USER_INT_COLUMN_SET:
-                setattr(user, final_key, parse_int_from_hbase(value))
-            elif key in USER_LIST_COLUMN_SET:
-                json = import_simplejson()
-                try:
-                    setattr(user, final_key, json.loads(value))
-                except:
-                    setattr(user, final_key, [])
-            else:
-                setattr(user, final_key, value)
-
+    def serialized(cls, json):
+        ''' serialized the HBase type object into JSON type '''
+        user = {}
+        for key, value in json.iteritems():
+            t_dct = cls.reverse_column_dct.get(key)
+            user[t_dct['column_name']] = PARSE_MAPPER[t_dct['type']](value)
         return user
 
     @classmethod
-    def de_parse(cls, prefix, json):
-        '''
-            de parse
-        '''
-        result_dict = {}
+    def deserialized(cls, json):
+        ''' deserialized the JSON type object into a HBase type '''
+        rst = {}
         for key, value in json.iteritems():
-            if key in {'_id', 'id'}:
-                pass
+            t_dct = cls.columns_dct.get(key)
+            if t_dct:
+                rst[t_dct['column_name']] = DEPARSE_MAPPER[t_dct['type']](value)
             else:
-                key_name = make_column_name(prefix, key)
-                if key_name in USER_DATETIME_COLUMN_SET:
-                    result_dict[key_name] = parse_datetime_into_hbase(value)
-                elif key_name in USER_BOOLEAN_COLUMN_SET:
-                    result_dict[key_name] = parse_boolean_into_hbase(value)
-                elif key_name in USER_INT_COLUMN_SET:
-                    result_dict[key_name] = parse_int_into_hbase(value)
-                elif key_name in USER_LIST_COLUMN_SET:
-                    json = import_simplejson()
-                    result_dict[key_name] = json.dumps(value)
-                else:
-                    result_dict[key_name] = convert_data(value)
-
-        return result_dict
-
+                print key
+        return rst
 
     @classmethod
-    def parse_list(cls, api, json_list):
-        '''
-            parse a list of model.
-        '''
-        if isinstance(json_list, list):
-            item_list = json_list
-        else:
-            item_list = json_list['users']
-    
-        results = ResultSet([cls.parse(api, obj) for obj in item_list])
-        return results
+    def serialized_list(cls, json_list):
+        ''' serialized a list of hbase objects to json type. '''
+        return ResultSet([cls.parse(obj) for obj in json_list])
 
     @classmethod
-    def de_parse_list(cls, prefix, json_list):
-        '''
-            de parse a list of data
-        '''
-        if isinstance(json_list, list):
-            item_list = json_list
-        else:
-            item_list = json_list['users']
-
-        results = ResultSet([cls.de_parse(prefix, obj) for obj in item_list])
+    def deserialized_list(cls, json_list):
+        ''' deserialized a list of JSON type objects to HBase type '''
+        return ResultSet([cls.de_parse(obj) for obj in json_list])
 
 
 class FollowRelations(Model):
-    '''
-        follow_relations class.
-    '''
-    @classmethod
-    def parse(cls, api, json):
-        '''
-            inherit from Model and rewrite the parse func
-        '''
-        user = cls(api)
-        for key, value in json.items():
-            final_key = key.split(':')[1]
-            if key in USER_DATETIME_COLUMN_SET:
-                setattr(user, final_key, parse_datetime_from_hbase(value))
-            elif key in USER_BOOLEAN_COLUMN_SET:
-                setattr(user, final_key, parse_boolean_from_hbase(value))
-            elif key in USER_INT_COLUMN_SET:
-                setattr(user, final_key, parse_int_from_hbase(value))
-            elif key in USER_LIST_COLUMN_SET:
-                json = import_simplejson()
-                try:
-                    setattr(user, final_key, json.loads(value))
-                except:
-                    setattr(user, final_key, [])
-            else:
-                setattr(user, final_key, value)
+    ''' follow_relations model.  '''
 
-        return user
-
-    @classmethod
-    def de_parse(cls, prefix, json):
-        '''
-            de parse
-        '''
-        result_dict = {}
-        for key, value in json.iteritems():
-            if key in {'_id', 'id', 'user_id'}:
-                pass
-            else:
-                key_name = make_column_name(prefix, key)
-                if key_name in USER_DATETIME_COLUMN_SET:
-                    result_dict[key_name] = parse_datetime_into_hbase(value)
-                elif key_name in USER_BOOLEAN_COLUMN_SET:
-                    result_dict[key_name] = parse_boolean_into_hbase(value)
-                elif key_name in USER_INT_COLUMN_SET:
-                    result_dict[key_name] = parse_int_into_hbase(value)
-                elif key_name in USER_LIST_COLUMN_SET:
-                    json = import_simplejson()
-                    result_dict[key_name] = json.dumps(value)
-                else:
-                    result_dict[key_name] = convert_data(value)
-
-        return result_dict
-
-
-    @classmethod
-    def parse_list(cls, api, json_list):
-        '''
-            parse a list of model.
-        '''
-        if isinstance(json_list, list):
-            item_list = json_list
-        else:
-            item_list = json_list['users']
-    
-        results = ResultSet([cls.parse(api, obj) for obj in item_list])
-        return results
-
-    @classmethod
-    def de_parse_list(cls, prefix, json_list):
-        '''
-            de parse a list of data
-        '''
-        if isinstance(json_list, list):
-            item_list = json_list
-        else:
-            item_list = json_list['users']
-
-        results = ResultSet([cls.de_parse(prefix, obj) for obj in item_list])
+    def __init__(cls):
+        cls.columns_dct, cls.reverse_column_dct = reverse_the_column_to_key(
+            FOLLOW_RELATIONS_COLUMN_DICT,
+        )
 
 
 class Followers(Model):
-    '''
-        follow_relations class.
-    '''
-    @classmethod
-    def parse(cls, api, json):
-        '''
-            inherit from Model and rewrite the parse func
-        '''
-        user = cls(api)
-        for key, value in json.items():
-            final_key = key.split(':')[1]
-            if key in USER_DATETIME_COLUMN_SET:
-                setattr(user, final_key, parse_datetime_from_hbase(value))
-            elif key in USER_BOOLEAN_COLUMN_SET:
-                setattr(user, final_key, parse_boolean_from_hbase(value))
-            elif key in USER_INT_COLUMN_SET:
-                setattr(user, final_key, parse_int_from_hbase(value))
-            elif key in USER_LIST_COLUMN_SET:
-                json = import_simplejson()
-                try:
-                    setattr(user, final_key, json.loads(value))
-                except:
-                    setattr(user, final_key, [])
-            else:
-                setattr(user, final_key, value)
-
-        return user
-
-    @classmethod
-    def de_parse(cls, prefix, json):
-        '''
-            de parse
-        '''
-        result_dict = {}
-        for key, value in json.iteritems():
-            if key in {'_id'}:
-                pass
-            else:
-                key_name = make_column_name(prefix, key)
-                if key_name in USER_DATETIME_COLUMN_SET:
-                    result_dict[key_name] = parse_datetime_into_hbase(value)
-                elif key_name in USER_BOOLEAN_COLUMN_SET:
-                    result_dict[key_name] = parse_boolean_into_hbase(value)
-                elif key_name in USER_INT_COLUMN_SET:
-                    result_dict[key_name] = parse_int_into_hbase(value)
-                elif key_name in USER_LIST_COLUMN_SET:
-                    json = import_simplejson()
-                    result_dict[key_name] = json.dumps(value)
-                else:
-                    result_dict[key_name] = convert_data(value)
-
-        return result_dict
+    ''' followers class. '''
+    def __init__(cls):
+        cls.columns_dct, cls.reverse_column_dct = reverse_the_column_to_key(
+            FOLLOWERS_COLUMN_DICT,
+        )
 
 
-    @classmethod
-    def parse_list(cls, api, json_list):
-        '''
-            parse a list of model.
-        '''
-        if isinstance(json_list, list):
-            item_list = json_list
-        else:
-            item_list = json_list['users']
-    
-        results = ResultSet([cls.parse(api, obj) for obj in item_list])
-        return results
+class Comments(Model):
+    ''' Comments class. '''
+    def __init__(cls):
+        cls.columns_dct, cls.reverse_column_dct = reverse_the_column_to_key(
+            COMMENTS_COLUMN_DICT,
+        )
 
-    @classmethod
-    def de_parse_list(cls, prefix, json_list):
-        '''
-            de parse a list of data
-        '''
-        if isinstance(json_list, list):
-            item_list = json_list
-        else:
-            item_list = json_list['users']
 
-        results = ResultSet([cls.de_parse(prefix, obj) for obj in item_list])
+class Reposts(Model):
+    ''' Reposts class. '''
+    def __init__(cls):
+        cls.columns_dct, cls.reverse_column_dct = reverse_the_column_to_key(
+            REPOSTS_COLUMN_DICT,
+        )
+
+
+class Mentions(Model):
+    ''' Mention class. '''
+    def __init__(cls):
+        cls.columns_dct, cls.reverse_column_dct = reverse_the_column_to_key(
+            MENTIONS_COLUMN_DICT,
+        )
+
+
+class MentionUsers(Model):
+    ''' mention users class. '''
+    def __init__(cls):
+        cls.columns_dct, cls.reverse_column_dct = reverse_the_column_to_key(
+            MENTION_USERS_COLUMN_DICT,
+        )
+
+
+class Status(Model):
+    ''' status class '''
+    def __init__(cls):
+        cls.columns_dct, cls.reverse_column_dct = reverse_the_column_to_key(
+            STATUS_COLUMN_DICT,
+        )
 
 
 class ModelFactory(object):
@@ -319,6 +131,10 @@ class ModelFactory(object):
         models. subclass this factary to add special
         models is also valid.
     '''
-    user = User
     follow_relation = FollowRelations
     followers = Followers
+    comments = Comments
+    reposts = Reposts
+    mentions = Mentions
+    mention_user = MentionUsers
+    status = Status
