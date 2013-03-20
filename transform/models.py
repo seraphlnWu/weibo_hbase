@@ -2,95 +2,98 @@
 '''
     transform models.
 '''
+import time
 
 import pymongo
 import happybase
 
 from parser.parser import ModelParser
 
-MONGO_INSTANCE = pymongo.Connection('localhost')['sandbox_mongo_5']
+from transform.config import TABLE_CF_MAPPER
 
 
-class HbaseInit(object):
-    '''
-        init hbase tables and columns.
-    '''
-    def __init__(self, hbase_host='localhost', autoconnect=True):
-        '''
-            init func.
-        '''
+class HBaseClient(object):
+    ''' init hbase tables and columns. '''
+
+    def __init__(
+        self,
+        host='localhost',
+        port=9090,
+        autoconnect=True,
+        table_prefix=None,
+        table_prefix_separator='_',
+        compat='0.92',
+        transport='buffered',
+    ):
+        ''' init the connection '''
+        self.host = host
+        self.port = port
+        self.autoconnect = autoconnect
+        self.table_prefix = table_prefix
+        self.table_prefix_separator = table_prefix_separator
+        self.compat = compat
+        self.transport = transport
+
         self.connection = None
-        self.startup_hbase(hbase_host, autoconnect)
+        self.table = None
 
+        self._startup_hbase()
 
-    def startup_hbase(self, hbase_host='localhost', autoconnect=True):
-        '''
-            连接hbase
-        '''
+    def _startup_hbase(self):
+        ''' 连接hbase '''
         self.connection = happybase.Connection(
-            hbase_host,
-            autoconnect=autoconnect,
+            host=self.host,
+            port=self.port,
+            autoconnect=self.autoconnect,
+            table_prefix=self.table_prefix,
+            table_prefix_separator=self.table_prefix_separator,
+            compat=self.compat,
+            transport=self.transport,
         )
         self.connection.open()
-        
 
-    def init_module_structure(self):
+
+    def close(self):
+        ''' close the connection '''
+        self.connection.close()
+
+
+    def init_table(self, table_name, cf):
         '''
-            初始化表以及表结构 
+            init a table.
+            if the table does not exists. create it.
+
+            @table_name => the table to init.
+            @cf => the column family of this table.
         '''
-        self.init_user()
-        self.init_follow_relations()
-        self.init_followers()
-
-
-    def init_test_data(self):
-        '''
-            初始化测试数据
-        '''
-        pass
-
-
-
-    def init_follow_relations(self):
         flag = False
         try:
-            flag = self.connection.is_table_enabled('follow_relations')
+            flag = self.connection.is_table_enabled(table_name)
         except:
             pass
 
         if flag:
+            print 'Current table is exists.'
+        else:
+            # here for testing, so, if the table is exists
+            # I will drop it and recreate a new one.
             self.connection.disable_table('follow_relations')
             self.connection.delete_table('follow_relations')
-        else:
-            pass
-        
-        self.connection.create_table(
-            'follow_relations',
-            {
-                'follow_attrs': dict(),
-                'task_attrs': dict(),
-            }
-        )
 
-    def init_followers(self):
-        flag = False
-        try:
-            flag = self.connection.is_table_enabled('followers')
-        except:
-            pass
+            print '%s will be created in ...'
+            for i in range(3, 0, -1):
+                print '%d...' % i
+                time.sleep(1)
 
-        if flag:
-            self.connection.disable_table('followers')
-            self.connection.delete_table('followers')
-        else:
-            pass
-        
-        self.connection.create_table(
-            'followers',
-            {
-                'follower_attrs': dict(),
-            }
-        )
+            self.connection.create_table(
+                table_name,
+                dict([(x, dict()) for x in cf]),  # for python 2.6-
+            )
+
+    def init_all_tables(self):
+        ''' 初始化表以及表结构 '''
+        for table_name, cf in TABLE_CF_MAPPER.iteritems():
+            self.init_table(table_name, cf)
 
 
 class InitTestData(object):

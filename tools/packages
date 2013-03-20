@@ -1,1 +1,2 @@
 happybase
+pymongo             # pymongo just because we use MongoDB as the database.
