@@ -55,7 +55,6 @@ def init_tables():
 def insert_data(table_name, row_format):
     ''' insert test data '''
     model_parser = ModelParser()
-    print table_name
     table = connection.table(table_name)
     cursor = MONGO_INSTANCE[table_name].find().limit(10)
     for cur_item in cursor:
