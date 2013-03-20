@@ -8,6 +8,8 @@ from os.path import realpath, dirname
 from os.path import join as path_join
 sys.path.insert(0, realpath(path_join(dirname(__file__), '../')))
 
+from multiprocessing import Process
+
 import happybase
 import pymongo
 
@@ -70,6 +72,9 @@ def insert_all_data():
     ''' insert whole data '''
     for cur_table, row_format in TABLE_DCT.iteritems():
         insert_data(cur_table, row_format)
+        p = Process(target=insert_data, args=[cur_table, row_format])
+        p.start()
+        p.join()
 
 if __name__ == '__main__':
     init_tables()
