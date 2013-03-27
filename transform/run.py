@@ -30,6 +30,7 @@ TABLE_DCT = {
     'mentions': '%(sm_user_id)s_%(_id)s',
     'mention_users': '%(sm_user_id)s_%(id)s',
     'status': '%(user_id)s_%(id)s',
+    'buzz': '%(url)s_%(create_at)s',
 }
 
 
@@ -62,7 +63,7 @@ def insert_data(table_name, row_format):
             row_format % cur_item,
             model_parser.deserialized(
                 table_name,
-                cur_item, 
+                cur_item,
             )
         )
 
@@ -76,5 +77,5 @@ def insert_all_data():
         p.join()
 
 if __name__ == '__main__':
-    init_tables()
-    insert_all_data()
+    #init_tables()
+    #insert_all_data()

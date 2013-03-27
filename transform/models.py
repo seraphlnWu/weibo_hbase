@@ -100,4 +100,3 @@ class HBaseClient(object):
         ''' 初始化表以及表结构 '''
         for table_name, cf in TABLE_CF_MAPPER.iteritems():
             self.init_table(table_name, cf)
-

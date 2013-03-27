@@ -10,6 +10,7 @@ TABLE_CF_MAPPER = {
     'mentions': ['mt', ],
     'mention_users': ['mu', ],
     'status': ['st', ],
+    'buzz': ['bz', ],
 }
 
 

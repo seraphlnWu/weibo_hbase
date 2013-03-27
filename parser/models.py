@@ -21,6 +21,7 @@ from config import REPOSTS_COLUMN_DICT
 from config import MENTIONS_COLUMN_DICT
 from config import MENTION_USERS_COLUMN_DICT
 from config import STATUS_COLUMN_DICT
+from config import BUZZ_COLUMN_DICT
 
 
 class ResultSet(list):
@@ -114,6 +115,12 @@ class Status(Model):
         STATUS_COLUMN_DICT,
     )
 
+class Buzz(Model):
+    ''' mention users class. '''
+    columns_dct, reverse_column_dct = reverse_the_column_to_key(
+        BUZZ_COLUMN_DICT,
+    )
+
 
 class ModelFactory(object):
     '''
@@ -128,3 +135,4 @@ class ModelFactory(object):
     mentions = Mentions
     mention_users = MentionUsers
     status = Status
+    buzz = Buzz
