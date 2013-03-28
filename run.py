@@ -7,8 +7,16 @@ import happybase
 HBASE_HOST = '192.168.122.101'
 
 TABLE_DCT = {
-    'buzz': '%(url)s_%(create_at)s',
+    'buzz': '%(url)s',
 }
+
+def get(row_key, table_name='buzz'):
+    ''' get one record from hbase by row_key '''
+    hc = HBaseClient(host=HBASE_HOST)
+    table = hc.connection.table(table_name)
+
+    result = ModelParser().serialized(table_name, table.row(row_key))
+    return result
 
 
 def insert_data(o_dict, default_value, table_name='buzz'):
@@ -61,3 +69,4 @@ if __name__ == '__main__':
     }
     result = json.dumps(test_data)
     insert_data({'content': result}, test_data)
+    print get(test_data.get('url'))
