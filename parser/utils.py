@@ -38,7 +38,7 @@ def parse_boolean_from_hbase(o_value):
 
 def parse_int_from_hbase(o_value):
     ''' convert the bytes to int '''
-    return unpack('l', o_value)
+    return unpack('>q', o_value)
 
 
 def parse_float_from_hbase(o_value):
@@ -75,7 +75,7 @@ def parse_int_into_hbase(o_value):
         o_value = int(o_value)
     else:
         o_value = 0
-    return pack('l', o_value)
+    return pack('>q', o_value)
 
 
 def parse_float_into_hbase(o_value):
