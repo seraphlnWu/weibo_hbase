@@ -5,6 +5,7 @@ from parser.parser import ModelParser
 import happybase
 
 HBASE_HOST = '192.168.122.101'
+HBASE_HOST = '116.213.213.106'
 
 TABLE_DCT = {
     'buzz': '%(url)s',
@@ -17,6 +18,15 @@ def get(row_key, table_name='buzz'):
 
     result = ModelParser().serialized(table_name, table.row(row_key))
     return result
+
+
+def get_all(table_name='buzz'):
+    hc = HBaseClient(host=HBASE_HOST)
+    table = hc.connection.table(table_name)
+    for result in ModelParser().serialized(table_name, table.scan(table_name, limit=1)):
+        import ipdb;ipdb.set_trace()
+        print result
+
 
 
 def insert_data(o_dict, default_value, table_name='buzz'):
@@ -67,6 +77,7 @@ if __name__ == '__main__':
         "source": "testsource",
         "industry": "testindustry",
     }
-    result = json.dumps(test_data)
-    insert_data({'content': result}, test_data)
-    print get(test_data.get('url'))
+    #result = json.dumps(test_data)
+    #insert_data({'content': result}, test_data)
+    #print get(test_data.get('url'))
+    get_all()
