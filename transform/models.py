@@ -23,7 +23,7 @@ class HBaseClient(object):
         autoconnect=True,
         table_prefix=None,
         table_prefix_separator='_',
-        compat='0.92',
+        compat='0.90',
         transport='buffered',
     ):
         ''' init the connection '''
