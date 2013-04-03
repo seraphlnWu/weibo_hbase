@@ -33,17 +33,17 @@ def parse_datetime_from_hbase(o_datetime):
 
 def parse_boolean_from_hbase(o_value):
     ''' convert the bytes to boolean '''
-    return unpack('b', o_value)
+    return unpack('b', o_value)[0]
 
 
 def parse_int_from_hbase(o_value):
     ''' convert the bytes to int '''
-    return unpack('>q', o_value)
+    return unpack('>q', o_value)[0]
 
 
 def parse_float_from_hbase(o_value):
     ''' convert the bytes to float '''
-    return unpack('f', o_value)
+    return unpack('f', o_value)[0]
 
 
 def parse_list_from_hbase(o_value):
