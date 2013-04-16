@@ -8,9 +8,9 @@ from datetime import datetime
 
 import happybase
 
-from weibo_hbase.parser.parser import ModelParser
+from parser.parser import ModelParser
 
-from weibo_hbase.transform.config import TABLE_CF_MAPPER
+from transform.config import TABLE_CF_MAPPER
 
 
 class HBaseClient(object):

@@ -57,21 +57,28 @@ def insert_data(table_name, row_format):
     ''' insert test data '''
     model_parser = ModelParser()
     table = connection.table(table_name)
-    cursor = MONGO_INSTANCE[table_name].find().limit(10)
+    cursor = MONGO_INSTANCE[table_name].find()
 
+    i = 0
     for cur_item in cursor:
         if table_name == 'follow_relations':
-            tmp_flwr = MONGO_INSTANCE.followers.find_one({'_id': cur_item.get('follower_id')}) 
-            cur_item.update(tmp_flwr)
+            try:
+                tmp_flwr = MONGO_INSTANCE.followers.find_one({'_id': cur_item.get('follower_id')}) 
+                cur_item.update(tmp_flwr)
+            except:
+                continue
             cur_record = model_parser.deserialized(
                     table_name,
                     cur_item,
                 )
-            print cur_record
             table.put(
                 row_format % cur_item,
                 cur_record
             )
+        i+=1
+        if i >= 100:
+            print i
+            i = 0
 
 
 def insert_all_data():
@@ -84,4 +91,4 @@ def insert_all_data():
 
 if __name__ == '__main__':
     init_tables()
-    insert_all_data()
+    #insert_all_data()

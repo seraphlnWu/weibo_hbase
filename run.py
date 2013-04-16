@@ -5,7 +5,6 @@ from parser.parser import ModelParser
 import happybase
 
 HBASE_HOST = '192.168.122.101'
-HBASE_HOST = '116.213.213.106'
 
 TABLE_DCT = {
     'buzz': '%(url)s',
@@ -15,7 +14,6 @@ def get(row_key, table_name='buzz'):
     ''' get one record from hbase by row_key '''
     hc = HBaseClient(host=HBASE_HOST)
     table = hc.connection.table(table_name)
-
     result = ModelParser().serialized(table_name, table.row(row_key))
     return result
 
@@ -77,7 +75,9 @@ if __name__ == '__main__':
         "source": "testsource",
         "industry": "testindustry",
     }
-    #result = json.dumps(test_data)
-    #insert_data({'content': result}, test_data)
-    #print get(test_data.get('url'))
-    get_all()
+    test_str = 'blablabla'
+    result = json.dumps(test_data)
+    insert_data({'content': result, 'src': test_str}, test_data)
+    print get(test_data.get('url'))
+    #get_all()
+    #print get('1720690654_3119384225', 'follow_relations')
