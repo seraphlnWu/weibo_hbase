@@ -40,6 +40,11 @@ class Model(object):
     def serialized(self, json):
         ''' serialized the HBase type object into JSON type '''
         user = {}
+        if isinstance(json, tuple):
+            json = json[1]
+        else:
+            pass
+
         for key, value in json.iteritems():
             t_dct = self.reverse_column_dct.get(key)
             user[t_dct['column_name']] = PARSE_MAPPER[t_dct['type']](value)
@@ -60,7 +65,9 @@ class Model(object):
     @classmethod
     def serialized_list(self, json_list):
         ''' serialized a list of hbase objects to json type. '''
-        return ResultSet([self.serialized(obj) for obj in json_list])
+        #return ResultSet([self.serialized(obj) for obj in json_list])
+        for obj in json_list:
+            yield self.serialized(obj)
 
     @classmethod
     def deserialized_list(self, json_list):
@@ -116,7 +123,13 @@ class Status(Model):
     )
 
 class Buzz(Model):
-    ''' mention users class. '''
+    ''' buzz information class. '''
+    columns_dct, reverse_column_dct = reverse_the_column_to_key(
+        BUZZ_COLUMN_DICT,
+    )
+
+class BuzzData(Model):
+    ''' new buzz information class. '''
     columns_dct, reverse_column_dct = reverse_the_column_to_key(
         BUZZ_COLUMN_DICT,
     )
@@ -136,3 +149,4 @@ class ModelFactory(object):
     mention_users = MentionUsers
     status = Status
     buzz = Buzz
+    buzz_data = BuzzData

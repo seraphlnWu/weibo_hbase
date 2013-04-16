@@ -3,6 +3,7 @@
 
 from models import ModelFactory
 from error import DataError
+from types import GeneratorType
 
 
 class Parser(object):
@@ -42,7 +43,8 @@ class ModelParser(Parser):
         except AttributeError:
             raise DataError('No model for this payload type: %s' % (method))
 
-        if isinstance(payload, list):
+        #import ipdb;ipdb.set_trace()
+        if isinstance(payload, list) or isinstance(payload, GeneratorType):
             result = model.serialized_list(payload)
         else:
             result = model.serialized(payload)
