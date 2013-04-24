@@ -4,7 +4,7 @@ from transform.models import HBaseClient
 from parser.parser import ModelParser
 import happybase
 
-HBASE_HOST = '192.168.122.101'
+#HBASE_HOST = '192.168.122.101'
 HBASE_HOST = '116.213.213.106'
 
 TABLE_DCT = {

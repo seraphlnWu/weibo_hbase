@@ -1,6 +1,6 @@
 # coding=utf8
 ''' parse the data structure between mongodb type and hbase type '''
-
+from types import GeneratorType
 from models import ModelFactory
 from error import DataError
 
@@ -12,7 +12,7 @@ class Parser(object):
         ''' parse the response and return the result ''' 
         raise NotImplementedError
            
-    def deserialized(self, prefix, method, payload):
+    def deserialized(self, method, payload):
         ''' deparse the response and return the result ''' 
         raise NotImplementedError
 
@@ -35,14 +35,8 @@ class ModelParser(Parser):
             @method: the given type.
             @payload: data object need to be translate.
         '''
-        try:
-            if method is None: return
-
-            model = getattr(self.model_factory, method)
-        except AttributeError:
-            raise DataError('No model for this payload type: %s' % (method))
-
-        if isinstance(payload, list):
+        model = self.get_model(method)
+        if isinstance(payload, GeneratorType):    
             result = model.serialized_list(payload)
         else:
             result = model.serialized(payload)
@@ -64,5 +58,17 @@ class ModelParser(Parser):
             result = model.deserialized_list(payload)
         else:
             result = model.deserialized(payload)
-
         return result
+
+    def get_model(self, name):
+        """
+        get corresponding model class
+        """
+        if name is None: return
+        try:
+            model = getattr(self.model_factory, name)
+        except AttributeError:
+            raise DataError('No model for this payload type: %s' % (name))
+
+        return model
+

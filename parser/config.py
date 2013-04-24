@@ -3,7 +3,21 @@
     config file for parser
 '''
 
+TABLE_DCT = {
+    'followers': '%(id)s',
+    'follow_relations': '%(user_id)s_%(follower_id)s',
+    'comments': '%(sm_user_id)s_%(status_id)s_%(id)s',
+    'reposts': '%(sm_user_id)s_%(retweeted_status_id)s_%(id)s',
+    'mentions': '%(sm_user_id)s_%(_id)s',
+    'mention_users': '%(sm_user_id)s_%(id)s',
+    'status': '%(user_id)s_%(id)s',
+    'buzz': '%(url)s_%(create_at)s',
+}
+
+
 FOLLOW_RELATIONS_COLUMN_DICT = {
+    'uid': {'column_name': 'fr:uid', 'type': 'int'},
+    'fid': {'column_name': 'fr:fid', 'type': 'int'},
     'created_at': {'column_name': 'fr:ca', 'type': 'datetime'},
     'followers_count': {'column_name': 'fr:foc', 'type': 'int'},
     'statuses_count': {'column_name': 'fr:sc', 'type': 'int'},
@@ -26,8 +40,8 @@ FOLLOW_RELATIONS_COLUMN_DICT = {
     'repost_count': {'column_name': 'fr:rc', 'type': 'int'},
 }
 
-
 FOLLOWERS_COLUMN_DICT = {
+    'id': {'column_name': 'fa:fid', 'type': 'int'},
     'sm_update_time': {'column_name': 'fa:ut', 'type': 'datetime'},
     'name': {'column_name': 'fa:n', 'type': 'string'},
     'statuses_created_at': {'column_name': 'fa:sca', 'type': 'datetime'},
@@ -55,6 +69,7 @@ FOLLOWERS_COLUMN_DICT = {
 }
 
 COMMENTS_COLUMN_DICT = {
+    'id': {'column_name': 'cm:id', 'type': 'int'},
     'sm_user_id': {'column_name': 'cm:su', 'type': 'int'},
     'user_id': {'column_name': 'cm:ui', 'type': 'int'},
     'user_name': {'column_name': 'cm:un', 'type': 'string'},
@@ -78,6 +93,7 @@ COMMENTS_COLUMN_DICT = {
 
 
 REPOSTS_COLUMN_DICT = {
+    'id': {'column_name': 'rp:id', 'type': 'int'},
     'sm_user_id': {'column_name': 'rp:ui', 'type': 'int'},
     'user_id': {'column_name': 'rp:rui', 'type': 'int'},
     'user_screen_name': {'column_name': 'rp:rn', 'type': 'string'},
@@ -101,6 +117,7 @@ REPOSTS_COLUMN_DICT = {
 }
 
 MENTIONS_COLUMN_DICT = {
+    'id': {'column_name': 'mt:id', 'type': 'int'},
     'user_id': {'column_name': 'mt:ui', 'type': 'int'},
     'user_screen_name': {'column_name': 'mt:un', 'type': 'string'},
     'sct': {'column_name': 'mt:sc', 'type': 'int'},
@@ -120,7 +137,6 @@ MENTIONS_COLUMN_DICT = {
     'in_reply_to_screen_name': {'column_name': 'mt:rn', 'type': 'string'},
     'segment': {'column_name': 'mt:seg', 'type': 'list'},
 }
-
 
 MENTION_USERS_COLUMN_DICT = {
     "city": {'column_name': 'mu:ct', 'type': 'string'},
@@ -145,6 +161,7 @@ MENTION_USERS_COLUMN_DICT = {
 
 
 STATUS_COLUMN_DICT = {
+    'id': {'column_name': 'st:id', 'type': 'int'},
     'user_id': {'column_name': 'st:ui', 'type': 'int'},
     'text': {'column_name': 'st:txt', 'type': 'string'},
     'created_at': {'column_name': 'st:ca', 'type': 'datetime'},
@@ -169,6 +186,9 @@ STATUS_COLUMN_DICT = {
     'original_pic': {'column_name': 'st:op', 'type': 'string'},
     'sm_eyeball_factor': {'column_name': 'st:eb', 'type': 'float'},
     'sm_flash_factor': {'column_name': 'st:fla', 'type': 'float'},
+    'comment_count': {'column_name': 'st:cc', 'type': 'int'},
+    'repost_count': {'column_namee': 'st:rc', 'type': 'int'},
+    'last_repost_id': {'column_name': 'st:lr', 'type': 'int'},
 }
 
 

@@ -7,7 +7,7 @@ from datetime import datetime
 from struct import pack
 from struct import unpack
 
-import sm_log
+from weibo_hbase import sm_log
 
 logger = sm_log.get_logger('weibo_hbase_utils')
 
@@ -53,7 +53,6 @@ def parse_list_from_hbase(o_value):
 
 def parse_datetime_into_hbase(o_datetime):
     ''' parse the datetime to hbase support type '''
-
     result = None
     if isinstance(o_datetime, unicode):
         o_datetime = format_date(o_datetime)
@@ -67,7 +66,6 @@ def parse_datetime_into_hbase(o_datetime):
 def parse_boolean_into_hbase(o_value):
     ''' parse the boolean value to bytes'''
     return pack('b', o_value)
-
 
 def parse_int_into_hbase(o_value):
     ''' parse the int to bytes '''
