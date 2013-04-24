@@ -3,6 +3,7 @@
 from types import GeneratorType
 from models import ModelFactory
 from error import DataError
+from types import GeneratorType
 
 
 class Parser(object):
@@ -35,8 +36,14 @@ class ModelParser(Parser):
             @method: the given type.
             @payload: data object need to be translate.
         '''
-        model = self.get_model(method)
-        if isinstance(payload, GeneratorType):    
+        try:
+            if method is None: return
+
+            model = getattr(self.model_factory, method)
+            raise DataError('No model for this payload type: %s' % (method))
+
+        #import ipdb;ipdb.set_trace()
+        if isinstance(payload, list) or isinstance(payload, GeneratorType):
             result = model.serialized_list(payload)
         else:
             result = model.serialized(payload)

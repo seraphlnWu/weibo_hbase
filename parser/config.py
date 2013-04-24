@@ -194,4 +194,5 @@ STATUS_COLUMN_DICT = {
 
 BUZZ_COLUMN_DICT = {
     'content': {'column_name': 'bz:c', 'type': 'string'},
+    'src': {'column_name': 'src:s', 'type': 'string'},
 }

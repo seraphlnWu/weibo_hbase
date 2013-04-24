@@ -4,29 +4,34 @@ from transform.models import HBaseClient
 from parser.parser import ModelParser
 import happybase
 
-#HBASE_HOST = '192.168.122.101'
 HBASE_HOST = '116.213.213.106'
 
 TABLE_DCT = {
     'buzz': '%(url)s',
+    'buzz_data': '%(url)s',
 }
 
-def get(row_key, table_name='buzz'):
+def get(row_key, table_name='buzz', columns=None):
     ''' get one record from hbase by row_key '''
     hc = HBaseClient(host=HBASE_HOST)
     table = hc.connection.table(table_name)
-
-    result = ModelParser().serialized(table_name, table.row(row_key))
+    result = ModelParser().serialized(table_name, table.row(row_key, columns=columns))
     return result
 
 
-def get_all(table_name='buzz'):
+def get_all(table_name='buzz', limit=1):
+    query_dict = {}
+    if limit:
+        query_dict.update({'limit': limit})
+    else:
+        pass
     hc = HBaseClient(host=HBASE_HOST)
     table = hc.connection.table(table_name)
-    for result in ModelParser().serialized(table_name, table.scan(table_name, limit=1)):
-        import ipdb;ipdb.set_trace()
-        print result
-
+    return ModelParser().serialized(
+        table_name,
+        table.scan(**query_dict),
+    )
+        #import ipdb;ipdb.set_trace()
 
 
 def insert_data(o_dict, default_value, table_name='buzz'):
@@ -77,7 +82,17 @@ if __name__ == '__main__':
         "source": "testsource",
         "industry": "testindustry",
     }
-    #result = json.dumps(test_data)
-    #insert_data({'content': result}, test_data)
-    #print get(test_data.get('url'))
+
+    '''
+    insert_data(
+        {'content': result, 'src': test_str},
+        test_data,
+        table_name='buzz_data',
+    )
+    '''
+    #url = "http://aftersale.autov.com.cn/aftersale/modified/1203/35456.html"
+
+    #print get(url)
+    #print get(test_data.get('ur'), 'src')
     get_all()
+    #print get('1720690654_3119384225', 'follow_relations')
