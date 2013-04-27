@@ -40,6 +40,7 @@ class ModelParser(Parser):
             if method is None: return
 
             model = getattr(self.model_factory, method)
+	except Exception as msg:
             raise DataError('No model for this payload type: %s' % (method))
 
         #import ipdb;ipdb.set_trace()

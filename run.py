@@ -11,10 +11,10 @@ TABLE_DCT = {
     'buzz_data': '%(url)s',
 }
 
-def get(row_key, table_name='buzz', columns=None):
+def get(row_key, table_name='buzz', columns=None, table=None):
     ''' get one record from hbase by row_key '''
-    hc = HBaseClient(host=HBASE_HOST)
-    table = hc.connection.table(table_name)
+    #hc = HBaseClient(host=HBASE_HOST)
+    #table = hc.connection.table(table_name)
     result = ModelParser().serialized(table_name, table.row(row_key, columns=columns))
     return result
 
@@ -90,9 +90,9 @@ if __name__ == '__main__':
         table_name='buzz_data',
     )
     '''
-    #url = "http://aftersale.autov.com.cn/aftersale/modified/1203/35456.html"
+    url = "http://aftersale.autov.com.cn/aftersale/modified/1203/35456.html"
 
-    #print get(url)
+    print get(url)
     #print get(test_data.get('ur'), 'src')
-    get_all()
+    #get_all()
     #print get('1720690654_3119384225', 'follow_relations')
