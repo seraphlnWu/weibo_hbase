@@ -11,10 +11,10 @@ TABLE_DCT = {
     'buzz_data': '%(url)s',
 }
 
-def get(row_key, table_name='buzz', columns=None):
+def get(row_key, table_name='buzz', columns=None, table=None):
     ''' get one record from hbase by row_key '''
-    hc = HBaseClient(host=HBASE_HOST)
-    table = hc.connection.table(table_name)
+    #hc = HBaseClient(host=HBASE_HOST)
+    #table = hc.connection.table(table_name)
     result = ModelParser().serialized(table_name, table.row(row_key, columns=columns))
     return result
 
@@ -67,6 +67,7 @@ if __name__ == '__main__':
     #hc = HBaseClient(host=HBASE_HOST)
     #hc.init_table('buzz', ['bz', ])
 
+    test_str = 'blablabla'
     test_data = {
         "title": 'testtile',
         "pan":    '0.123',
@@ -80,15 +81,15 @@ if __name__ == '__main__':
         "view_count": 2,
         "source": "testsource",
         "industry": "testindustry",
+        'src': test_str,
     }
-    test_str = 'blablabla'
 
     insert_data(
-        {'content': test_data, 'src': test_str},
         test_data,
-        table_name='buzz_data',
+        test_data,
+        table_name='buzz',
     )
-    url = 'http://club2011.auto.163.com/post/100010426605.html'
+    url = "http://aftersale.autov.com.cn/aftersale/modified/1203/35456.html"
 
     print get(url)
     #print get(test_data.get('ur'), 'src')

@@ -7,7 +7,7 @@ from datetime import datetime
 from struct import pack
 from struct import unpack
 
-from weibo_hbase import sm_log
+import sm_log
 
 logger = sm_log.get_logger('weibo_hbase_utils')
 
