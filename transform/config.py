@@ -11,7 +11,7 @@ TABLE_CF_MAPPER = {
     #'mentions': ['mt', ],
     #'mention_users': ['mu', ],
     #'status': ['st', ],
-    'buzz': ['bz', 'src'],
+    'buzz': ['bz', 'src', ],
     #'buzz_data': ['bz', 'src'],
 }
 

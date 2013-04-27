@@ -8,8 +8,13 @@ HBASE_HOST = '116.213.213.106'
 
 TABLE_DCT = {
     'buzz': '%(url)s',
-    'buzz_data': '%(url)s',
 }
+
+connection = happybase.Connection(
+    host=HBASE_HOST,
+)
+connection.open()
+
 
 def get(row_key, table_name='buzz', columns=None, table=None):
     ''' get one record from hbase by row_key '''
@@ -63,7 +68,6 @@ def batch_insert(o_list, default_value, batch_size=1000, table_name='buzz'):
 
 
 if __name__ == '__main__':
-    import json
     #hc = HBaseClient(host=HBASE_HOST)
     #hc.init_table('buzz', ['bz', ])
 
@@ -83,15 +87,18 @@ if __name__ == '__main__':
         "industry": "testindustry",
         'src': test_str,
     }
+    table = connection.table('buzz')
 
     insert_data(
         test_data,
         test_data,
         table_name='buzz',
     )
-    url = "http://aftersale.autov.com.cn/aftersale/modified/1203/35456.html"
+    url = 'http://Itmaybeatesturl'
 
-    print get(url)
-    #print get(test_data.get('ur'), 'src')
+    print 'here is get whole line'
+    print get(row_key=url, table=table)
+
+    print 'here is only get src'
+    print get(test_data.get('url'), columns=('src', ), table=table)
     #get_all()
-    #print get('1720690654_3119384225', 'follow_relations')
