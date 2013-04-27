@@ -3,6 +3,7 @@
 '''
 
 TABLE_CF_MAPPER = {
+    'followbrand_flwr_relations': ['ffr', ],
     #'follow_relations': ['fr', ],
     #'followers': ['fa', ],
     #'comments': ['cm', ],
@@ -11,7 +12,7 @@ TABLE_CF_MAPPER = {
     #'mention_users': ['mu', ],
     #'status': ['st', ],
     #'buzz': ['bz', 'src'],
-    'buzz_data': ['bz', 'src'],
+    #'buzz_data': ['bz', 'src'],
 }
 
 

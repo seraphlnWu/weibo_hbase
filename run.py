@@ -19,7 +19,7 @@ def get(row_key, table_name='buzz', columns=None):
     return result
 
 
-def get_all(table_name='buzz', limit=1):
+def get_all(table_name='buzz', limit=1, row_start=None, row_stop=None, row_prefix=None, columns=None, filter=None, timestamp=None, include_timestamp=False, batch_size=1000):
     query_dict = {}
     if limit:
         query_dict.update({'limit': limit})
@@ -71,28 +71,26 @@ if __name__ == '__main__':
         "title": 'testtile',
         "pan":    '0.123',
         "brief":  'testbreif',
-        "url": 'http://dealer.bitauto.com/100019023/news/201303/4212818.html',
+        "url": 'http://Itmaybeatesturl',
         "create_at": 1364370727,
         "author": "testauthor",
         'site:': "testsite",
-        "file_address": 'testfile_address',
         "category": "testcategory",
         "comment_count": 1,
         "view_count": 2,
         "source": "testsource",
         "industry": "testindustry",
     }
+    test_str = 'blablabla'
 
-    '''
     insert_data(
-        {'content': result, 'src': test_str},
+        {'content': test_data, 'src': test_str},
         test_data,
         table_name='buzz_data',
     )
-    '''
-    #url = "http://aftersale.autov.com.cn/aftersale/modified/1203/35456.html"
+    url = 'http://club2011.auto.163.com/post/100010426605.html'
 
-    #print get(url)
+    print get(url)
     #print get(test_data.get('ur'), 'src')
-    get_all()
+    #get_all()
     #print get('1720690654_3119384225', 'follow_relations')

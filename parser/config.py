@@ -193,6 +193,17 @@ STATUS_COLUMN_DICT = {
 
 
 BUZZ_COLUMN_DICT = {
-    'content': {'column_name': 'bz:c', 'type': 'string'},
+    'title': {'column_name': 'bz:t', 'type': 'string'},
+    'pan': {'column_name': 'bz:p', 'type': 'float'},
+    'brift': {'column_name': 'bz:b', 'type': 'string'},
+    'url': {'column_name': 'bz:u', 'type': 'string'},
+    'create_at': {'column_name': 'bz:ca', 'type': 'string'},
+    'author': {'column_name': 'bz:a', 'type': 'string'},
+    'site': {'column_name': 'bz:s', 'type': 'string'},
+    'category': {'column_name': 'bz:c', 'type': 'string'},
+    'comment_count': {'column_name': 'bz:cc', 'type': 'int'},
+    'view_count': {'column_name': 'bz:vc', 'type': 'int'},
+    'source': {'column_name': 'bz:src',  'type': 'string'},
+    'industry': {'column_name': 'bz:i', 'type': 'string'},
     'src': {'column_name': 'src:s', 'type': 'string'},
 }
