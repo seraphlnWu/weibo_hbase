@@ -71,6 +71,17 @@ if __name__ == '__main__':
     #hc = HBaseClient(host=HBASE_HOST)
     #hc.init_table('buzz', ['bz', ])
 
+    '''
+        在插入数据到HBase之后，插入一条记录到Redis(buzz_store_queue)
+        记录格式如下: 
+        
+          '-'.join([ row_key, '%s_%s' % (uid, 'followRelations'), ]) 
+
+        row_key => HBase中的row_key
+        uid, followRelations => 会组合为文件名的一部分.
+            建议采用 site(uid) + buzz(followRelations)来命名
+    '''
+
     test_str = 'blablabla'
     test_data = {
         "title": 'testtile',
