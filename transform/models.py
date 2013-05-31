@@ -67,10 +67,13 @@ class HBaseClient(object):
             @cf => the column family of this table.
         '''
         flag = False
+        '''
         try:
             flag = self.connection.is_table_enabled(table_name)
         except:
             pass
+        '''
+        print "The flag is =>", flag
 
         '''
         if flag:
@@ -80,11 +83,13 @@ class HBaseClient(object):
         # here for testing, so, if the table is exists
         # I will drop it and recreate a new one.
         print table_name
+        '''
         try:
             self.connection.disable_table(table_name)
             self.connection.delete_table(table_name)
         except:
             pass
+        '''
 
         print '%s will be created in ...' % table_name
         for i in range(3, 0, -1):
@@ -99,4 +104,5 @@ class HBaseClient(object):
     def init_all_tables(self):
         ''' 初始化表以及表结构 '''
         for table_name, cf in TABLE_CF_MAPPER.iteritems():
+            print table_name, cf
             self.init_table(table_name, cf)
