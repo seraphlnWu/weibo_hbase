@@ -142,6 +142,7 @@ MENTIONS_COLUMN_DICT = {
     'in_reply_to_user_id': {'column_name': 'mt:rui', 'type': 'int'},
     'in_reply_to_screen_name': {'column_name': 'mt:rn', 'type': 'string'},
     'segment': {'column_name': 'mt:seg', 'type': 'list'},
+    'sentiment': {'column_name': 'mt:st', 'type': 'list'},
 }
 
 MENTION_USERS_COLUMN_DICT = {

@@ -21,6 +21,7 @@ from config import REPOSTS_COLUMN_DICT
 from config import MENTIONS_COLUMN_DICT
 from config import MENTION_USERS_COLUMN_DICT
 from config import STATUS_COLUMN_DICT
+from config import FOLLOWBRAND_FLWR_RELATIONS_COLUMN_DICT
 from config import BUZZ_COLUMN_DICT
 
 
@@ -90,6 +91,20 @@ class FollowRelations(Model):
     )
 
 
+class FollowbrandFlwrRelations(Model):
+    ''' followbrand flwr relations model. '''
+    columns_dct, reverse_column_dct = reverse_the_column_to_key(
+        FOLLOWBRAND_FLWR_RELATIONS_COLUMN_DICT,
+    )
+
+
+class FollowbrandFlwrs(Model):
+    ''' followbrand flwrs model. '''
+    columns_dct, reverse_column_dct = reverse_the_column_to_key(
+        FOLLOWERS_COLUMN_DICT,
+    )
+
+
 class Comments(Model):
     ''' Comments class. '''
     columns_dct, reverse_column_dct = reverse_the_column_to_key(
@@ -145,6 +160,8 @@ class ModelFactory(object):
     '''
     follow_relations = FollowRelations
     followers = Followers
+    followbrand_flwr_relations = FollowbrandFlwrRelations
+    followbrand_flwrs = FollowbrandFlwrs
     comments = Comments
     reposts = Reposts
     mentions = Mentions
