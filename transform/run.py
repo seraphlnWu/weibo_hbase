@@ -88,15 +88,22 @@ def insert_data(table_name, row_format):
 
     cursor = db[table_name].find().limit(1000)
 
-
     length = 1000.0
     i = 0
 
     for cur_item in cursor:
+        if table_name == 'followbrand_flwrs':
+            table_name = 'followers'
 
         if table_name == 'follow_relations':
             try:
                 tmp_flwr = db.followers.find_one({'_id': cur_item.get('follower_id')})
+                cur_item.update(tmp_flwr)
+            except:
+                continue
+        elif table_name == 'followbrand_flwr_relations':
+            try:
+                tmp_flwr = db.followbrand_flwrs.find_one({'_id': cur_item.get('follower_id')})
                 cur_item.update(tmp_flwr)
             except:
                 continue
