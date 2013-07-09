@@ -109,9 +109,8 @@ if __name__ == '__main__':
         "industry": "testindustry",
         'src': test_str,
     }
-    table = connection.table('follow_relations')
+    table = connection.table('buzz')
 
-    '''
     insert_data(
         test_data,
         test_data,
@@ -120,17 +119,8 @@ if __name__ == '__main__':
     url = 'http://Itmaybeatesturl'
 
     print 'here is get whole line'
-    '''
-    #print get(row_key=url, table=table)
-    #print get(row_key='1036059182_2986199321', table_name='follow_relations', table=table)
-    '''
-    for cur_record in get_all(table_name='follow_relations', row_prefix="1898229275_", limit=10):
-        print cur_record
-    '''
-    print get('1898229275_1286659964', table_name='follow_relations', table=table)
+    print get(row_key=url, table=table)
 
-    '''
     print 'here is only get src'
     print get(test_data.get('url'), columns=('src', ), table=table)
-    '''
     #get_all()
