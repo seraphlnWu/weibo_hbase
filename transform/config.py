@@ -5,13 +5,13 @@
 TABLE_CF_MAPPER = {
     'followbrand_flwr_relations': ['ffr', ],
     'follow_relations': ['fr', ],
-    'followers': ['fa', ],
+    #'followers': ['fa', ],
     'comments': ['cm', ],
     'reposts': ['rp', ],
     'mentions': ['mt', ],
     'mention_users': ['mu', ],
-    'status': ['st', ],
-    #'buzz': ['bz', 'src', ],
+    #'status': ['st', ],
+    'buzz': ['bz', 'src', ],
     #'buzz_data': ['bz', 'src'],
 }
 

@@ -24,7 +24,18 @@ def get(row_key, table_name='buzz', columns=None, table=None):
     return result
 
 
-def get_all(table_name='buzz', limit=1, row_start=None, row_stop=None, row_prefix=None, columns=None, filter=None, timestamp=None, include_timestamp=False, batch_size=1000):
+def get_all(
+    table_name='buzz',
+    limit=1,
+    row_start=None,
+    row_stop=None,
+    row_prefix=None,
+    columns=None,
+    filter=None,
+    timestamp=None,
+    include_timestamp=False,
+    batch_size=1000,
+):
     query_dict = {}
     if limit:
         query_dict.update({'limit': limit})
@@ -98,8 +109,9 @@ if __name__ == '__main__':
         "industry": "testindustry",
         'src': test_str,
     }
-    table = connection.table('buzz')
+    table = connection.table('follow_relations')
 
+    '''
     insert_data(
         test_data,
         test_data,
@@ -108,8 +120,17 @@ if __name__ == '__main__':
     url = 'http://Itmaybeatesturl'
 
     print 'here is get whole line'
-    print get(row_key=url, table=table)
+    '''
+    #print get(row_key=url, table=table)
+    #print get(row_key='1036059182_2986199321', table_name='follow_relations', table=table)
+    '''
+    for cur_record in get_all(table_name='follow_relations', row_prefix="1898229275_", limit=10):
+        print cur_record
+    '''
+    print get('1898229275_1286659964', table_name='follow_relations', table=table)
 
+    '''
     print 'here is only get src'
     print get(test_data.get('url'), columns=('src', ), table=table)
+    '''
     #get_all()

@@ -163,7 +163,7 @@ MENTION_USERS_COLUMN_DICT = {
     "url": {'column_name': 'mu:url', 'type': 'string'},
     "verified": {'column_name': 'mu:vf', 'type': 'boolean'},
     "mention_count": {'column_name': 'mu:mc', 'type': 'int'},
-    "is_follower": {'column_name': 'mu:isf', 'type': 'boolean'},
+    "is_follower": {'column_name': 'mu:isf', 'type': 'int'},
 }
 
 
